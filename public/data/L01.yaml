@@ -1,0 +1,191 @@
+version: "1.0"
+
+lessons:
+  - id: L01
+    title: 제1과 인사
+    order: 1
+
+    topics:
+      - id: T-L01-01
+        title: 안녕하십니까?
+        turns:
+          - speaker: 리에
+            text: 안녕하십니까?
+            translation: 您好！
+          - speaker: 웨이
+            text: 네, 안녕하십니까?
+            translation: 是的，您好！
+          - speaker: 리에
+            text: 리에입니다.
+            translation: 我是理惠。
+          - speaker: 웨이
+            text: 저는 웨이입니다.
+            translation: 我是伟。
+
+      - id: T-L01-02
+        title: 어느 나라 사람입니까?
+        turns:
+          - speaker: 리에
+            text: 어느 나라 사람입니까?
+            translation: 你是哪国人？
+          - speaker: 제임스
+            text: 미국 사람입니다. 리에 씨는 중국 사람입니까?
+            translation: 我是美国人。理惠你是中国人吗？
+          - speaker: 리에
+            text: 아니요. 저는 일본 사람입니다.
+            translation: 不是。我是日本人。
+          - speaker: 제임스
+            text: 아, 그렇습니까?
+            translation: 啊，是吗？
+
+      - id: T-L01-03
+        title: 회사원이 아닙니다
+        turns:
+          - speaker: 리에
+            text: 회사원입니까?
+            translation: 你是公司职员吗？
+          - speaker: 마리아
+            text: 아니요, 회사원이 아닙니다.
+            translation: 不是，我不是公司职员。
+          - speaker: 리에
+            text: 그럼 학생입니까?
+            translation: 那么是学生吗？
+          - speaker: 마리아
+            text: 네, 대학생입니다.
+            translation: 是的，是大学生。
+
+      - id: T-L01-04
+        title: 반갑습니다
+        turns:
+          - speaker: 미선
+            text: 누구입니까?
+            translation: 是谁？
+          - speaker: 웨이
+            text: 제 친구 이영수입니다.
+            translation: 是我的朋友李英洙。
+          - speaker: 미선
+            text: 처음 뵙겠습니다. 김미선입니다.
+            translation: 初次见面。我是金美善。
+          - speaker: 영수
+            text: 안녕하십니까? 반갑습니다.
+            translation: 您好！很高兴认识你。
+
+    vocabGroups:
+      - id: VG-L01-NAT
+        name: 나라(국적)
+        kind: noun
+        items:
+          - { id: V-L01-NAT-01, word: 나라,   meaning: 国家,     tags: [국적] }
+          - { id: V-L01-NAT-02, word: 미국,   meaning: 美国,     tags: [국적] }
+          - { id: V-L01-NAT-03, word: 중국,   meaning: 中国,     tags: [국적] }
+          - { id: V-L01-NAT-04, word: 일본,   meaning: 日本,     tags: [국적] }
+          - { id: V-L01-NAT-05, word: 영국,   meaning: 英国,     tags: [국적] }
+          - { id: V-L01-NAT-06, word: 독일,   meaning: 德国,     tags: [국적] }
+          - { id: V-L01-NAT-07, word: 러시아, meaning: 俄罗斯,   tags: [국적] }
+          - { id: V-L01-NAT-08, word: 몽골,   meaning: 蒙古,     tags: [국적] }
+          - { id: V-L01-NAT-09, word: 인도,   meaning: 印度,     tags: [국적] }
+          - { id: V-L01-NAT-10, word: 태국,   meaning: 泰国,     tags: [국적] }
+          - { id: V-L01-NAT-11, word: 한국,   meaning: 韩国,     tags: [국적] }
+          - { id: V-L01-NAT-12, word: 호주,   meaning: 澳大利亚, tags: [국적] }
+          - { id: V-L01-NAT-13, word: 캐나다, meaning: 加拿大,   tags: [국적] }
+
+      - id: VG-L01-JOB
+        name: 직업
+        kind: noun
+        items:
+          - { id: V-L01-JOB-01, word: 경찰,   meaning: 警察,     tags: [직업] }
+          - { id: V-L01-JOB-02, word: 학생,   meaning: 学生,     tags: [직업] }
+          - { id: V-L01-JOB-03, word: 가수,   meaning: 歌手,     tags: [직업] }
+          - { id: V-L01-JOB-04, word: 선생님, meaning: 老师,     tags: [직업] }
+          - { id: V-L01-JOB-05, word: 간호사, meaning: 护士,     tags: [직업] }
+          - { id: V-L01-JOB-06, word: 회사원, meaning: 公司职员, tags: [직업] }
+          - { id: V-L01-JOB-07, word: 의사,   meaning: 医生,     tags: [직업] }
+          - { id: V-L01-JOB-08, word: 비서,   meaning: 秘书,     tags: [직업] }
+          - { id: V-L01-JOB-09, word: 기자,   meaning: 记者,     tags: [직업] }
+          - { id: V-L01-JOB-10, word: 은행원, meaning: 银行职员, tags: [직업] }
+          - { id: V-L01-JOB-11, word: 변호사, meaning: 律师,     tags: [직업] }
+
+      - id: VG-L01-V1
+        name: 동사 1
+        kind: verb
+        items:
+          - { id: V-L01-V1-01, word: 가다,     meaning: 去,     tags: [동사] }
+          - { id: V-L01-V1-02, word: 오다,     meaning: 来,     tags: [동사] }
+          - { id: V-L01-V1-03, word: 만나다,   meaning: 见面,   tags: [동사] }
+          - { id: V-L01-V1-04, word: 인사하다, meaning: 打招呼, tags: [동사] }
+          - { id: V-L01-V1-05, word: 자다,     meaning: 睡觉,   tags: [동사] }
+          - { id: V-L01-V1-06, word: 먹다,     meaning: 吃,     tags: [동사] }
+          - { id: V-L01-V1-07, word: 입다,     meaning: 穿,     tags: [동사] }
+          - { id: V-L01-V1-08, word: 듣다,     meaning: 听,     tags: [동사] }
+          - { id: V-L01-V1-09, word: 읽다,     meaning: 读,     tags: [동사] }
+          - { id: V-L01-V1-10, word: 쓰다,     meaning: 写,     tags: [동사] }
+
+    grammars:
+      - id: G-L01-01
+        name: 입니다
+        function: 表示身份、状态或指定，正式体
+        examples:
+          - { sentence: "저는 학생입니다.", translation: "我是学生。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
+          - { sentence: "여기가 우리 집입니다.", translation: "这里是我们的家。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
+          - { sentence: "그분은 의사입니다.", translation: "那位是医生。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
+          - { sentence: "이것은 제 책상입니다.", translation: "这是我的书桌。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
+          - { sentence: "이 아이가 제 딸입니다.", translation: "这个孩子是我的女儿。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
+
+      - id: G-L01-03
+        name: 입니까?
+        function: 입니다 的疑问形式
+        examples:
+          - { sentence: "이분이 어느 나라 사람입니까?", translation: "这位是哪国人？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "지금이 두 시입니까?", translation: "现在是两点吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "여기가 신촌입니까?", translation: "这里是新村吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "이 책은 누구 책입니까?", translation: "这本书是谁的书？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "오늘이 며칠입니까?", translation: "今天几号？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          
+      - id: G-L01-02
+        name: 은/는
+        function: 表示陈述主体或话题，可表对比强调
+        examples:
+          - { sentence: "서울은 한국의 수도입니다.", translation: "首尔是韩国的首都。", focus: "은", answer: "은", choices: ["는", "이", "가"] }
+          - { sentence: "저는 한국 사람입니다.", translation: "我是韩国人。", focus: "는", answer: "는", choices: ["은", "이", "가"] }
+          - { sentence: "동생은 키가 큽니다.", translation: "弟弟个子高。", focus: "은", answer: "은", choices: ["는", "이", "가"] }
+          - { sentence: "생선은 싫어합니다.", translation: "不喜欢鱼。", focus: "은", answer: "은", choices: ["는", "이", "가"] }
+
+      - id: G-L01-03
+        name: 입니까?
+        function: 입니다 的疑问形式
+        examples:
+          - { sentence: "이분이 어느 나라 사람입니까?", translation: "这位是哪国人？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是哪国人？" }
+          - { sentence: "지금이 두 시입니까?", translation: "现在是两点吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是两点吗？" }
+          - { sentence: "여기가 신촌입니까?", translation: "这里是新村吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是新村吗？" }
+          - { sentence: "이 책은 누구 책입니까?", translation: "这本书是谁的书？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是谁的书？" }
+          - { sentence: "오늘이 며칠입니까?", translation: "今天几号？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：几号？" }
+
+      - id: G-L01-04
+        name: 이/가 아니다
+        function: 이다 的否定形式
+        examples:
+          - { sentence: "저는 일본 사람이 아닙니다.", translation: "我不是日本人。", focus: "이 아닙니다", answer: "이 아닙니다", accept: ["이 아닙니다", "이 아니에요"], choices: ["입니다", "입니까", "이 아닙니까"], hint: "否定" }
+          - { sentence: "존순 씨는 의사가 아닙니다.", translation: "尊顺不是医生。", focus: "가 아닙니다", answer: "가 아닙니다", choices: ["입니다", "입니까", "가 아닙니까"], hint: "否定" }
+          - { sentence: "이것은 교과서가 아닙니다.", translation: "这不是教科书。", focus: "가 아닙니다", answer: "가 아닙니다", hint: "否定" }
+          - { sentence: "린다 씨는 선생님이 아닙니다.", translation: "琳达不是老师。", focus: "이 아닙니다", answer: "이 아닙니다", hint: "否定" }
+          - { sentence: "우리 어머니는 한국 사람이 아닙니다.", translation: "我妈妈不是韩国人。", focus: "이 아닙니다", answer: "이 아닙니다", hint: "否定" }
+
+      - id: G-L01-05
+        name: -습니다/ㅂ니다
+        function: 谓词正式体陈述终结词尾
+        examples:
+          - { sentence: "학교에 갑니다.", translation: "去学校。", focus: "갑니다", answer: "갑니다", dictionaryForm: "가다", choices: ["갑니까", "갔습니다", "가요"], hint: "습니다/ㅂ니다" }
+          - { sentence: "저는 키가 큽니다.", translation: "我个子高。", focus: "큽니다", answer: "큽니다", dictionaryForm: "크다", choices: ["큽니까", "컸습니다", "커요"], hint: "습니다/ㅂ니다" }
+          - { sentence: "만나서 반갑습니다.", translation: "见到你很高兴。", focus: "반갑습니다", answer: "반갑습니다", dictionaryForm: "반갑다", choices: ["반갑습니까", "반가웠습니다", "반가워요"], hint: "습니다/ㅂ니다" }
+          - { sentence: "책이 있습니다.", translation: "有书。", focus: "있습니다", answer: "있습니다", dictionaryForm: "있다", choices: ["있습니까", "있었습니다", "없습니다"], hint: "습니다/ㅂ니다" }
+          - { sentence: "의자가 없습니다.", translation: "没有椅子。", focus: "없습니다", answer: "없습니다", dictionaryForm: "없다", choices: ["없습니까", "없었습니다", "있습니다"], hint: "습니다/ㅂ니다" }
+
+      - id: G-L01-06
+        name: -습니까?/ㅂ니까?
+        function: 谓词正式体疑问终结词尾
+        examples:
+          - { sentence: "무엇을 합니까?", translation: "做什么？", focus: "합니까", answer: "합니까", dictionaryForm: "하다", choices: ["합니다", "했습니다", "해요"], hint: "습니까/ㅂ니까" }
+          - { sentence: "어디에 갑니까?", translation: "去哪里？", focus: "갑니까", answer: "갑니까", dictionaryForm: "가다", choices: ["갑니다", "갔습니다", "가요"], hint: "습니까/ㅂ니까" }
+          - { sentence: "사전이 있습니까?", translation: "有词典吗？", focus: "있습니까", answer: "있습니까", dictionaryForm: "있다", choices: ["있습니다", "있었습니다", "없습니다"], hint: "습니까/ㅂ니까" }
+          - { sentence: "한국 친구가 없습니까?", translation: "没有韩国朋友吗？", focus: "없습니까", answer: "없습니까", dictionaryForm: "없다", choices: ["없습니다", "없었습니다", "있습니다"], hint: "습니까/ㅂ니까" }
+          - { sentence: "시간이 많습니까?", translation: "时间多吗？", focus: "많습니까", answer: "많습니까", dictionaryForm: "많다", choices: ["많습니다", "많았습니다", "적습니다"], hint: "습니까/ㅂ니까" }

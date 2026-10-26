@@ -1,0 +1,273 @@
+version: "1.0"
+
+lessons:
+  - id: L02
+    title: 제2과 물건
+    order: 2
+
+    topics:
+      - id: T-L02-01
+        title: 이것이 교과서입니까?
+        turns:
+          - speaker: 마리아
+            text: 이것이 교과서입니까?
+            translation: 这是教科书吗？
+          - speaker: 전원
+            text: 네, 그렇습니다.
+            translation: 是的，是这样。
+          - speaker: 마리아
+            text: 그럼 저것은 무엇입니까?
+            translation: 那么那个是什么？
+          - speaker: 전원
+            text: 사전입니다.
+            translation: 是词典。
+
+      - id: T-L02-02
+        title: 지도도 있습니까?
+        turns:
+          - speaker: 영수
+            text: 달력이 있습니까?
+            translation: 有日历吗？
+          - speaker: 마리아
+            text: 네, 있습니다.
+            translation: 是的，有。
+          - speaker: 영수
+            text: 지도도 있습니까?
+            translation: 也有地图吗？
+          - speaker: 마리아
+            text: 아니요, 없습니다.
+            translation: 不，没有。
+
+      - id: T-L02-03
+        title: 은행이 어디에 있습니까?
+        turns:
+          - speaker: 마리아
+            text: 은행이 어디에 있습니까?
+            translation: 银行在哪里？
+          - speaker: 전원
+            text: 학생회관에 있습니다.
+            translation: 在学生馆。
+          - speaker: 마리아
+            text: 학생회관은 어디에 있습니까?
+            translation: 学生馆在哪里？
+          - speaker: 전원
+            text: 도서관 앞에 있습니다.
+            translation: 在图书馆前面。
+
+      - id: T-L02-04
+        title: 집이 어디입니까?
+        turns:
+          - speaker: 영수
+            text: 집이 어디입니까?
+            translation: 家在哪里？
+          - speaker: 마리아
+            text: 신촌입니다.
+            translation: 在新村。
+          - speaker: 영수
+            text: 집 근처에 무엇이 있습니까?
+            translation: 家附近有什么？
+          - speaker: 마리아
+            text: 백화점하고 지하철역이 있습니다.
+            translation: 有百货商店和地铁站。
+
+    vocabGroups:
+      - id: VG-L02-OBJ1
+        name: 물건 1
+        kind: noun
+        items:
+          - { id: V-L02-OBJ1-01, word: 사전, meaning: 词典, tags: [물건] }
+          - { id: V-L02-OBJ1-02, word: 잡지, meaning: 杂志, tags: [물건] }
+          - { id: V-L02-OBJ1-03, word: 읽기책, meaning: 读物, tags: [물건] }
+          - { id: V-L02-OBJ1-04, word: 교과서, meaning: 教科书, tags: [물건] }
+          - { id: V-L02-OBJ1-05, word: 책상, meaning: 书桌, tags: [물건] }
+          - { id: V-L02-OBJ1-06, word: 필통, meaning: 笔袋, tags: [물건] }
+          - { id: V-L02-OBJ1-07, word: 지갑, meaning: 钱包, tags: [물건] }
+
+      - id: VG-L02-OBJ2
+        name: 물건 2
+        kind: noun
+        items:
+          - { id: V-L02-OBJ2-01, word: 돈, meaning: 钱, tags: [물건] }
+          - { id: V-L02-OBJ2-02, word: 여권, meaning: 护照, tags: [물건] }
+          - { id: V-L02-OBJ2-03, word: 카드, meaning: 卡, tags: [물건] }
+          - { id: V-L02-OBJ2-04, word: 신분증, meaning: 身份证, tags: [물건] }
+          - { id: V-L02-OBJ2-05, word: 연필, meaning: 铅笔, tags: [물건] }
+          - { id: V-L02-OBJ2-06, word: 자, meaning: 尺子, tags: [물건] }
+          - { id: V-L02-OBJ2-07, word: 지우개, meaning: 橡皮, tags: [물건] }
+          - { id: V-L02-OBJ2-08, word: 볼펜, meaning: 圆珠笔, tags: [물건] }
+
+      - id: VG-L02-OBJ3
+        name: 물건 3
+        kind: noun
+        items:
+          - { id: V-L02-OBJ3-01, word: 손수건, meaning: 手帕, tags: [물건] }
+          - { id: V-L02-OBJ3-02, word: 휴지, meaning: 手纸, tags: [물건] }
+          - { id: V-L02-OBJ3-03, word: 공책, meaning: 笔记本, tags: [물건] }
+          - { id: V-L02-OBJ3-04, word: 거울, meaning: 镜子, tags: [물건] }
+          - { id: V-L02-OBJ3-05, word: 수첩, meaning: 手册, tags: [물건] }
+          - { id: V-L02-OBJ3-06, word: 종이, meaning: 纸, tags: [물건] }
+          - { id: V-L02-OBJ3-07, word: 열쇠, meaning: 钥匙, tags: [물건] }
+          - { id: V-L02-OBJ3-08, word: 과자, meaning: 饼干, tags: [물건] }
+
+      - id: VG-L02-CLASS
+        name: 교실 물건
+        kind: noun
+        items:
+          - { id: V-L02-CLASS-01, word: 창문, meaning: 窗户, tags: [교실] }
+          - { id: V-L02-CLASS-02, word: 분필, meaning: 粉笔, tags: [교실] }
+          - { id: V-L02-CLASS-03, word: 칠판, meaning: 黑板, tags: [교실] }
+          - { id: V-L02-CLASS-04, word: 그림, meaning: 画, tags: [교실] }
+          - { id: V-L02-CLASS-05, word: 옷걸이, meaning: 衣架, tags: [교실] }
+          - { id: V-L02-CLASS-06, word: 문, meaning: 门, tags: [교실] }
+          - { id: V-L02-CLASS-07, word: 텔레비전, meaning: 电视, tags: [교실] }
+
+      - id: VG-L02-FURN
+        name: 가구/사물
+        kind: noun
+        items:
+          - { id: V-L02-FURN-01, word: 의자, meaning: 椅子, tags: [사물] }
+          - { id: V-L02-FURN-02, word: 달력, meaning: 日历, tags: [사물] }
+          - { id: V-L02-FURN-03, word: 책상, meaning: 书桌, tags: [사물] }
+          - { id: V-L02-FURN-04, word: 지도, meaning: 地图, tags: [사물] }
+
+      - id: VG-L02-ADJ
+        name: 형용사 1
+        kind: adj
+        items:
+          - { id: V-L02-ADJ-01, word: 많다, meaning: 多, tags: [형용사] }
+          - { id: V-L02-ADJ-02, word: 적다, meaning: 少, tags: [형용사] }
+          - { id: V-L02-ADJ-03, word: 크다, meaning: 大, tags: [형용사] }
+          - { id: V-L02-ADJ-04, word: 작다, meaning: 小, tags: [형용사] }
+          - { id: V-L02-ADJ-05, word: 좋다, meaning: 好, tags: [형용사] }
+          - { id: V-L02-ADJ-06, word: 나쁘다, meaning: 坏, tags: [형용사] }
+
+      - id: VG-L02-PLACE
+        name: 장소
+        kind: noun
+        items:
+          - { id: V-L02-PLACE-01, word: 교실, meaning: 教室, tags: [장소] }
+          - { id: V-L02-PLACE-02, word: 화장실, meaning: 洗手间, tags: [장소] }
+          - { id: V-L02-PLACE-03, word: 식당, meaning: 食堂, tags: [장소] }
+          - { id: V-L02-PLACE-04, word: 서점, meaning: 书店, tags: [장소] }
+          - { id: V-L02-PLACE-05, word: 우체국, meaning: 邮局, tags: [장소] }
+          - { id: V-L02-PLACE-06, word: 사무실, meaning: 办公室, tags: [장소] }
+          - { id: V-L02-PLACE-07, word: 백화점, meaning: 百货商店, tags: [장소] }
+          - { id: V-L02-PLACE-08, word: 극장, meaning: 剧场, tags: [장소] }
+          - { id: V-L02-PLACE-09, word: 병원, meaning: 医院, tags: [장소] }
+          - { id: V-L02-PLACE-10, word: 약국, meaning: 药店, tags: [장소] }
+          - { id: V-L02-PLACE-11, word: 회사, meaning: 公司, tags: [장소] }
+          - { id: V-L02-PLACE-12, word: 가게, meaning: 商店, tags: [장소] }
+          - { id: V-L02-PLACE-13, word: 공원, meaning: 公园, tags: [장소] }
+          - { id: V-L02-PLACE-14, word: 시장, meaning: 市场, tags: [장소] }
+
+      - id: VG-L02-POS
+        name: 위치
+        kind: noun
+        items:
+          - { id: V-L02-POS-01, word: 앞, meaning: 前, tags: [위치] }
+          - { id: V-L02-POS-02, word: 뒤, meaning: 后, tags: [위치] }
+          - { id: V-L02-POS-03, word: 옆, meaning: 旁边, tags: [위치] }
+          - { id: V-L02-POS-04, word: 위, meaning: 上, tags: [위치] }
+          - { id: V-L02-POS-05, word: 밑/아래, meaning: 下, tags: [위치] }
+          - { id: V-L02-POS-06, word: 안, meaning: 里, tags: [위치] }
+          - { id: V-L02-POS-07, word: 밖, meaning: 外, tags: [위치] }
+
+    grammars:
+      - id: G-L02-01
+        name: 이/가
+        function: 主格助词，用于体词后表示主语
+        examples:
+          - { sentence: "이것이 책상입니다.", translation: "这是书桌。", focus: "이", answer: "이", dictionaryForm: "이/가", choices: ["가", "은", "는"], hint: "主语" }
+          - { sentence: "여기가 학교입니다.", translation: "这里是学校。", focus: "가", answer: "가", dictionaryForm: "이/가", choices: ["이", "은", "는"], hint: "主语" }
+          - { sentence: "친구가 많습니다.", translation: "朋友很多。", focus: "가", answer: "가", dictionaryForm: "이/가", choices: ["이", "은", "는"], hint: "主语" }
+          - { sentence: "내가 말했습니다.", translation: "我说了。", focus: "내가", answer: "내가", dictionaryForm: "나+가", choices: ["나가", "저가", "너가"], hint: "特殊变形" }
+          - { sentence: "누가 왔습니까?", translation: "谁来了？", focus: "누가", answer: "누가", dictionaryForm: "누구+가", choices: ["누구가", "누구이", "누가가"], hint: "特殊变形" }
+
+      - id: G-L02-02
+        name: 이/그/저
+        function: 指示代词（这/那/那）
+        examples:
+          - { sentence: "이것은 책입니다.", translation: "这是书。", focus: "이것", answer: "이것", dictionaryForm: "이/그/저", choices: ["그것", "저것", "무엇"], hint: "离说话人近" }
+          - { sentence: "그것은 연필입니다.", translation: "那是铅笔。", focus: "그것", answer: "그것", dictionaryForm: "이/그/저", choices: ["이것", "저것", "무엇"], hint: "离听话人近" }
+          - { sentence: "저것은 교과서입니다.", translation: "那是教科书。", focus: "저것", answer: "저것", dictionaryForm: "이/그/저", choices: ["이것", "그것", "무엇"], hint: "离双方都远" }
+
+      - id: G-L02-03
+        name: 도
+        function: 补助词，表示“也”
+        examples:
+          - { sentence: "그림도 많습니다.", translation: "画也很多。", focus: "도", answer: "도", choices: ["이", "가", "는"], hint: "也" }
+          - { sentence: "집에서도 공부합니다.", translation: "在家也学习。", focus: "도", answer: "도", choices: ["에", "에서", "는"], hint: "也" }
+          - { sentence: "바나나도 갑니다.", translation: "香蕉也去。", focus: "도", answer: "도", choices: ["이", "가", "는"], hint: "也" }
+
+      - id: G-L02-04
+        name: 있다/없다
+        function: 表示有/没有，在/不在
+        examples:
+          - { sentence: "질문이 있습니까?", translation: "有问题吗？", focus: "있습니까", answer: "있습니까", dictionaryForm: "있다", choices: ["있습니다", "없습니까", "있었습니다"], hint: "있다/없다" }
+          - { sentence: "돈이 없습니까?", translation: "没有钱吗？", focus: "없습니까", answer: "없습니까", dictionaryForm: "없다", choices: ["없습니다", "있습니까", "없었습니다"], hint: "있다/없다" }
+          - { sentence: "선생님이 계십니다.", translation: "老师在。（敬语）", focus: "계십니다", answer: "계십니다", dictionaryForm: "계시다", choices: ["있습니다", "없습니다", "계십니까"], hint: "敬语" }
+
+      - id: G-L02-05
+        name: 에
+        function: 副词格助词，表示存在处所
+        examples:
+          - { sentence: "친구가 미국에 있습니다.", translation: "朋友在美国。", focus: "에", answer: "에", choices: ["에서", "도", "하고"], hint: "存在处所" }
+          - { sentence: "교실에 텔레비전이 없습니다.", translation: "教室里没有电视。", focus: "에", answer: "에", choices: ["에서", "도", "하고"], hint: "存在处所" }
+          - { sentence: "고양이가 방에 없습니다.", translation: "猫不在房间里。", focus: "에", answer: "에", choices: ["에서", "도", "하고"], hint: "存在处所" }
+
+      - id: G-L02-06
+        name: 하고
+        function: 连接两个及以上的体词，意为“和”
+        examples:
+          - { sentence: "책하고 공책이 있습니다.", translation: "有书和笔记本。", focus: "하고", answer: "하고", choices: ["에", "도", "에서"], hint: "和" }
+          - { sentence: "빵하고 김밥을 먹습니다.", translation: "吃面包和紫菜包饭。", focus: "하고", answer: "하고", choices: ["에", "도", "에서"], hint: "和" }
+          - { sentence: "가방하고 구두를 삽니다.", translation: "买包和皮鞋。", focus: "하고", answer: "하고", choices: ["에", "도", "에서"], hint: "和" }
+      - id: G-L02-01
+        name: 이/가
+        function: 主格助词，用于体词后表示主语
+        examples:
+          - { sentence: "이것이 책상입니다.", translation: "这是书桌。", focus: "이", answer: "이", dictionaryForm: "이/가", choices: ["가", "은", "는"], hint: "主语" }
+          - { sentence: "여기가 학교입니다.", translation: "这里是学校。", focus: "가", answer: "가", dictionaryForm: "이/가", choices: ["이", "은", "는"], hint: "主语" }
+          - { sentence: "친구가 많습니다.", translation: "朋友很多。", focus: "가", answer: "가", dictionaryForm: "이/가", choices: ["이", "은", "는"], hint: "主语" }
+          - { sentence: "내가 말했습니다.", translation: "我说了。", focus: "내가", answer: "내가", dictionaryForm: "나+가", choices: ["나가", "저가", "너가"], hint: "特殊变形" }
+          - { sentence: "누가 왔습니까?", translation: "谁来了？", focus: "누가", answer: "누가", dictionaryForm: "누구+가", choices: ["누구가", "누구이", "누가가"], hint: "特殊变形" }
+
+      - id: G-L02-02
+        name: 이/그/저
+        function: 指示代词（这/那/那）
+        examples:
+          - { sentence: "이것은 책입니다.", translation: "这是书。", focus: "이것", answer: "이것", dictionaryForm: "이/그/저", choices: ["그것", "저것", "무엇"], hint: "离说话人近" }
+          - { sentence: "그것은 연필입니다.", translation: "那是铅笔。", focus: "그것", answer: "그것", dictionaryForm: "이/그/저", choices: ["이것", "저것", "무엇"], hint: "离听话人近" }
+          - { sentence: "저것은 교과서입니다.", translation: "那是教科书。", focus: "저것", answer: "저것", dictionaryForm: "이/그/저", choices: ["이것", "그것", "무엇"], hint: "离双方都远" }
+
+      - id: G-L02-03
+        name: 도
+        function: 补助词，表示“也”
+        examples:
+          - { sentence: "그림도 많습니다.", translation: "画也很多。", focus: "도", answer: "도", dictionaryForm: "도", choices: ["이", "가", "는"], hint: "也" }
+          - { sentence: "집에서도 공부합니다.", translation: "在家也学习。", focus: "도", answer: "도", dictionaryForm: "도", choices: ["에", "에서", "는"], hint: "也" }
+          - { sentence: "바나나도 갑니다.", translation: "香蕉也去。", focus: "도", answer: "도", dictionaryForm: "도", choices: ["이", "가", "는"], hint: "也" }
+
+      - id: G-L02-04
+        name: 있다/없다
+        function: 表示有/没有，在/不在
+        examples:
+          - { sentence: "질문이 있습니까?", translation: "有问题吗？", focus: "있습니까", answer: "있습니까", dictionaryForm: "있다", choices: ["있습니다", "없습니까", "있었습니다"], hint: "있다/없다" }
+          - { sentence: "돈이 없습니까?", translation: "没有钱吗？", focus: "없습니까", answer: "없습니까", dictionaryForm: "없다", choices: ["없습니다", "있습니까", "없었습니다"], hint: "있다/없다" }
+          - { sentence: "선생님이 계십니다.", translation: "老师在。（敬语）", focus: "계십니다", answer: "계십니다", dictionaryForm: "계시다", choices: ["있습니다", "없습니다", "계십니까"], hint: "敬语" }
+
+      - id: G-L02-05
+        name: 에
+        function: 副词格助词，表示存在处所
+        examples:
+          - { sentence: "친구가 미국에 있습니다.", translation: "朋友在美国。", focus: "에", answer: "에", dictionaryForm: "에", choices: ["에서", "도", "하고"], hint: "存在处所" }
+          - { sentence: "교실에 텔레비전이 없습니다.", translation: "教室里没有电视。", focus: "에", answer: "에", dictionaryForm: "에", choices: ["에서", "도", "하고"], hint: "存在处所" }
+          - { sentence: "고양이가 방에 없습니다.", translation: "猫不在房间里。", focus: "에", answer: "에", dictionaryForm: "에", choices: ["에서", "도", "하고"], hint: "存在处所" }
+
+      - id: G-L02-06
+        name: 하고
+        function: 连接两个及以上的体词，意为“和”
+        examples:
+          - { sentence: "책하고 공책이 있습니다.", translation: "有书和笔记本。", focus: "하고", answer: "하고", dictionaryForm: "하고", choices: ["에", "도", "에서"], hint: "和" }
+          - { sentence: "빵하고 김밥을 먹습니다.", translation: "吃面包和紫菜包饭。", focus: "하고", answer: "하고", dictionaryForm: "하고", choices: ["에", "도", "에서"], hint: "和" }
+          - { sentence: "가방하고 구두를 삽니다.", translation: "买包和皮鞋。", focus: "하고", answer: "하고", dictionaryForm: "하고", choices: ["에", "도", "에서"], hint: "和" }

@@ -1,0 +1,337 @@
+import { useEffect, useState } from "react";
+import { db, type AnswerLog } from "../db/db";
+import type { KnowledgeBase } from "../data/schema";
+import type { ReviewUnit } from "../review/units";
+
+type Mode = "due" | "vocab" | "grammar" | "topic" | "mix";
+
+interface Props {
+    kb: KnowledgeBase;
+    units: Record<string, ReviewUnit>;
+    dueCount: number;
+    onStart: (m: Mode) => void;
+    onWrongBook: () => void;
+    onReset: () => void;
+}
+
+export default function Dashboard({ kb, units, dueCount, onStart, onWrongBook, onReset }: Props) {
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [logs, setLogs] = useState<AnswerLog[]>([]);
+    const allUnits = Object.values(units);
+    const [daysToShow, setDaysToShow] = useState(7);
+
+    useEffect(() => {
+        const handleResize = () => {
+            // 屏幕宽度小于 600px 时，只显示 4 天，防止拥挤
+            setDaysToShow(window.innerWidth < 600 ? 4 : 7);
+        };
+        handleResize(); // 初始化
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        db.logs.toArray().then(setLogs);
+    }, []);
+
+    // 统计数据
+    const totalLogs = logs.length;
+    const correctLogs = logs.filter(l => l.correct).length;
+    const accuracy = totalLogs > 0 ? Math.round((correctLogs / totalLogs) * 100) : 0;
+
+    const wrongLogs = logs.filter(l => !l.correct);
+    const wrongUnitKeys = Array.from(new Set(wrongLogs.map(l => l.unitKey)));
+    const wrongCount = wrongUnitKeys.length;
+
+    // 近期答题量动态计算
+    const recentDays = Array.from({ length: daysToShow }).map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (daysToShow - 1 - i));
+        const dateStr = `${d.getMonth() + 1}/${d.getDate()}`;
+        const dayLogs = logs.filter(l => {
+            const logDate = new Date(l.at);
+            return logDate.getFullYear() === d.getFullYear() &&
+                logDate.getMonth() === d.getMonth() &&
+                logDate.getDate() === d.getDate();
+        });
+        return { label: dateStr, count: dayLogs.length };
+    });
+    const maxDayCount = Math.max(1, ...recentDays.map(d => d.count));
+
+    // 计算全库总数据
+    const totalVocab = kb.lessons.reduce((sum, l) => sum + l.vocabGroups.reduce((n, g) => n + g.items.length, 0), 0);
+    const totalGrammar = kb.lessons.reduce((sum, l) => sum + l.grammars.length, 0);
+    const totalTopic = kb.lessons.reduce((sum, l) => sum + l.topics.length, 0);
+
+    // 课程进度
+    const courseStats = kb.lessons.map(lesson => {
+        const lessonUnits = allUnits.filter(u => u.lessonId === lesson.id);
+        const mastered = lessonUnits.filter(u => u.stage >= 3).length;
+        const total = lessonUnits.length;
+        const vocab = lesson.vocabGroups.reduce((n, g) => n + g.items.length, 0);
+        return {
+            id: lesson.id,
+            title: lesson.title,
+            mastered,
+            total,
+            percent: total ? Math.round(mastered / total * 100) : 0,
+            vocab: vocab,
+            grammar: lesson.grammars.length,
+            topic: lesson.topics.length
+        };
+    });
+
+    // 生成平滑折线图 SVG 路径
+    const generateSmoothPath = (points: { x: number; y: number }[]) => {
+        if (points.length === 0) return "";
+        if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
+
+        let d = `M ${points[0].x},${points[0].y}`;
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[i - 1] || points[i];
+            const p1 = points[i];
+            const p2 = points[i + 1];
+            const p3 = points[i + 2] || p2;
+
+            // 控制点计算
+            const cp1x = p1.x + (p2.x - p0.x) / 6;
+            const cp1y = p1.y + (p2.y - p0.y) / 6;
+            const cp2x = p2.x - (p3.x - p1.x) / 6;
+            const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+            d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+        }
+        return d;
+    };
+
+    // 计算 SVG 绘图坐标 (宽 100，高 100)
+    const chartPoints = recentDays.map((d, i) => {
+        // x 轴均分
+        const x = daysToShow > 1 ? (i / (daysToShow - 1)) * 100 : 50;
+        // y 轴：顶部留 15 的边距，底部留 15 的边距，中间 70 是高度
+        const y = 100 - (d.count / maxDayCount) * 70 - 15;
+        return { x, y, count: d.count, label: d.label };
+    });
+
+    return (
+        <div className="app">
+            <header>
+                <div>
+                    <h1>韩语复习面板</h1>
+                    <p className="subtitle">已收录 {kb.lessons.length} 课，共 {allUnits.length} 个知识点</p>
+                </div>
+
+                {/* 替换原来的重置按钮 */}
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    {!showResetConfirm ? (
+                        <button
+                            className="btn danger"
+                            style={{ width: "auto", padding: "8px 16px", margin: 0 }}
+                            onClick={() => setShowResetConfirm(true)}
+                        >
+                            重置进度
+                        </button>
+                    ) : (
+                        <>
+                            <span style={{ fontSize: 14, color: "#ff3b30", fontWeight: 600 }}>确定要清空吗？</span>
+                            <button
+                                className="btn secondary"
+                                style={{ width: "auto", padding: "8px 16px", margin: 0 }}
+                                onClick={() => setShowResetConfirm(false)}
+                            >
+                                取消
+                            </button>
+                            <button
+                                className="btn danger"
+                                style={{ width: "auto", padding: "8px 16px", margin: 0 }}
+                                onClick={() => {
+                                    setShowResetConfirm(false);
+                                    onReset();
+                                }}
+                            >
+                                确认重置
+                            </button>
+                        </>
+                    )}
+                </div>
+            </header>
+
+            <div className="dashboard-grid">
+
+                {/* ================= 左侧栏 ================= */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 20, height: "100%" }}>
+
+                    {/* 1. 开始学习 */}
+                    <div className="card">
+                        <div className="card-title">开始学习</div>
+                        <button className="btn" onClick={() => onStart("due")} disabled={dueCount === 0}>
+                            {dueCount > 0 ? `今日复习 (${dueCount} 个待复习)` : "今日任务已完成 🎉"}
+                        </button>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
+                            <button className="btn secondary" style={{ margin: 0 }} onClick={() => onStart("vocab")}>只练词汇</button>
+                            <button className="btn secondary" style={{ margin: 0 }} onClick={() => onStart("grammar")}>只练语法</button>
+                            <button className="btn secondary" style={{ margin: 0 }} onClick={() => onStart("topic")}>对话排序</button>
+                            <button className="btn secondary" style={{ margin: 0 }} onClick={() => onStart("mix")}>混合练习</button>
+                        </div>
+                    </div>
+
+                    {/* 2. 学习数据与近七天（左右并排） */}
+                    <div className="card" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                        <div className="card-title">学习数据</div>
+
+                        {/* 内部左右布局：窄屏时自动换行变上下 */}
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 24, alignItems: "stretch", flex: 1 }}>
+
+                            {/* 左侧：竖向排列的数据指标 */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: "1 1 180px", justifyContent: "center" }}>
+                                <div className="stat-box" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "#fff", border: "1px solid #f0f0f0" }}>
+                                    <span className="stat-label" style={{ fontSize: 14 }}>总答题数</span>
+                                    <span className="stat-num" style={{ fontSize: 24 }}>{totalLogs}</span>
+                                </div>
+                                <div className="stat-box" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "#fff", border: "1px solid #f0f0f0" }}>
+                                    <span className="stat-label" style={{ fontSize: 14 }}>总正确率</span>
+                                    <span className="stat-num" style={{ fontSize: 24 }}>{accuracy}%</span>
+                                </div>
+                            </div>
+
+                            {/* 右侧：平滑折线图 */}
+                            <div style={{ flex: "2 1 250px", display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                                {/* <div className="text-muted" style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>近期答题量</div> */}
+
+                                <div style={{ position: "relative", width: "100%", height: 140 }}>
+                                    <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ width: "100%", height: "100%", overflow: "visible" }}>
+                                        {/* 渐变背景填充 */}
+                                        <defs>
+                                            <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stopColor="#007aff" stopOpacity="0.2" />
+                                                <stop offset="100%" stopColor="#007aff" stopOpacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        {/* 填充区域 */}
+                                        <path
+                                            d={`${generateSmoothPath(chartPoints)} L 100,100 L 0,100 Z`}
+                                            fill="url(#lineGradient)"
+                                        />
+
+                                        {/* 平滑曲线 */}
+                                        <path
+                                            d={generateSmoothPath(chartPoints)}
+                                            fill="none"
+                                            stroke="#007aff"
+                                            strokeWidth="2.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            vectorEffect="non-scaling-stroke"
+                                        />
+                                    </svg>
+
+                                    {/* X 轴标签和数据点 */}
+                                    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", display: "flex" }}>
+                                        {chartPoints.map((p, i) => (
+                                            <div key={i} style={{ flex: 1, position: "relative", display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center" }}>
+                                                {/* 数据点 (仅在大于0时显示) */}
+                                                {p.count > 0 && (
+                                                    <div style={{
+                                                        position: "absolute",
+                                                        left: `${p.x}%`,
+                                                        top: `${p.y}%`,
+                                                        transform: "translate(-50%, -50%)",
+                                                        width: 8,
+                                                        height: 8,
+                                                        background: "#fff",
+                                                        border: "2.5px solid #007aff",
+                                                        borderRadius: "50%",
+                                                        zIndex: 2
+                                                    }} />
+                                                )}
+                                                {/* 底部文字标签 */}
+                                                <span style={{ fontSize: 11, color: "#86868b", marginTop: "auto", transform: "translateY(20px)" }}>{p.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {/* ================= 右侧栏 ================= */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+                    {/* 4. 错题本快捷卡片 */}
+                    <div className="card">
+                        <div className="card-title">
+                            错题本
+                            <span style={{ fontSize: 13, color: "#ff3b30", cursor: "pointer" }} onClick={onWrongBook}>
+                                查看全部 →
+                            </span>
+                        </div>
+                        {wrongCount === 0 ? (
+                            <p className="text-muted">暂无错题，继续保持！</p>
+                        ) : (
+                            <div>
+                                <p className="text-muted" style={{ marginBottom: 12 }}>共有 {wrongCount} 个知识点需要加强</p>
+                                <button className="btn secondary" onClick={onWrongBook}>去重做错题</button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 5. 课程内容与进度 */}
+                    <div className="card">
+                        <div className="card-title">课程内容</div>
+
+                        {/* 全局总数汇总 */}
+                        <div className="stat-grid" style={{ gridTemplateColumns: "1fr 1fr 1fr", marginBottom: 24 }}>
+                            <div className="stat-box" style={{ padding: "12px 8px" }}>
+                                <div className="stat-num" style={{ fontSize: 22 }}>{totalVocab}</div>
+                                <div className="stat-label">总词汇</div>
+                            </div>
+                            <div className="stat-box" style={{ padding: "12px 8px" }}>
+                                <div className="stat-num" style={{ fontSize: 22 }}>{totalGrammar}</div>
+                                <div className="stat-label">总语法</div>
+                            </div>
+                            <div className="stat-box" style={{ padding: "12px 8px" }}>
+                                <div className="stat-num" style={{ fontSize: 22 }}>{totalTopic}</div>
+                                <div className="stat-label">总对话</div>
+                            </div>
+                        </div>
+
+                        {/* 每一课的具体信息 */}
+                        <div style={{ maxHeight: "300px", overflowY: "auto", paddingRight: 4 }}>
+                            {courseStats.map(c => (
+                                <div key={c.id} style={{ marginBottom: 16 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 4 }}>
+                                        <span style={{ fontWeight: 600 }}>{c.title}</span>
+                                        <span className="text-muted">{c.percent}%</span>
+                                    </div>
+
+                                    {/* 每课数据标签 */}
+                                    <div className="text-muted" style={{ fontSize: 12, marginBottom: 6, display: "flex", gap: 10 }}>
+                                        <span>词汇 {c.vocab}</span>
+                                        <span>·</span>
+                                        <span>语法 {c.grammar}</span>
+                                        <span>·</span>
+                                        <span>对话 {c.topic}</span>
+                                    </div>
+
+                                    <div style={{ height: 6, background: "#e5e5ea", borderRadius: 3, overflow: "hidden" }}>
+                                        <div style={{
+                                            width: `${c.percent}%`,
+                                            height: "100%",
+                                            background: c.percent === 100 ? "#34c759" : "#007aff",
+                                            transition: "width 0.3s"
+                                        }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    );
+}
