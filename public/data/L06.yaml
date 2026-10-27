@@ -1,0 +1,229 @@
+version: "1.0"
+
+lessons:
+  - id: L06
+    title: 제6과 물건 사기
+    order: 6
+
+    topics:
+      - id: T-L06-01
+        title: 선물을 사러 갑시다
+        turns:
+          - speaker: 마리아
+            text: 오후에 선물을 사러 갑시다.
+            translation: 下午去买礼物吧。
+          - speaker: 웨이
+            text: 그럽시다. 뭘 살까요?
+            translation: 好的。买什么呢？
+          - speaker: 마리아
+            text: 장미꽃과 케이크를 삽시다.
+            translation: 买玫瑰花和蛋糕吧。
+          - speaker: 웨이
+            text: 어디에서 살까요?
+            translation: 在哪里买呢？
+          - speaker: 마리아
+            text: 학교 앞에 꽃 가게도 있고 빵집도 있어요.
+            translation: 学校前面有花店，也有面包店。
+          - speaker: 웨이
+            text: 그럼 거기에 삽시다.
+            translation: 那就在那里买吧。
+
+      - id: T-L06-02
+        title: 좋지만 좀 비싸요
+        turns:
+          - speaker: 마리아
+            text: 케이크 있어요?
+            translation: 有蛋糕吗？
+          - speaker: 주인
+            text: 네, 여기 있습니다.
+            translation: 是的，在这里。
+          - speaker: 마리아
+            text: 좀 큰 건 없어요?
+            translation: 没有大一点的吗？
+          - speaker: 주인
+            text: 이 케이크는 어때요?
+            translation: 这个蛋糕怎么样？
+          - speaker: 마리아
+            text: 좋지만 좀 비싸요.
+            translation: 好是好，但是有点贵。
+          - speaker: 주인
+            text: 그럼, 이 치즈 케이크를 사세요.
+            translation: 那么，请买这个芝士蛋糕吧。
+
+      - id: T-L06-03
+        title: 얼마예요?
+        turns:
+          - speaker: 웨이
+            text: 장미꽃 좀 보여주세요.
+            translation: 请给我看看玫瑰花。
+          - speaker: 주인
+            text: 네, 구경하세요.
+            translation: 好的，请随便看。
+          - speaker: 웨이
+            text: 얼마예요?
+            translation: 多少钱？
+          - speaker: 주인
+            text: 한 송이에 1000원입니다.
+            translation: 一朵1000韩元。
+          - speaker: 웨이
+            text: 이건 얼마예요?
+            translation: 这个多少钱？
+          - speaker: 주인
+            text: 그건 한 송이에 1500원입니다.
+            translation: 那个一朵1500韩元。
+
+      - id: T-L06-04
+        title: 깎아 주세요
+        turns:
+          - speaker: 마리아
+            text: 장미꽃 10송이 주세요.
+            translation: 请给我10朵玫瑰花。
+          - speaker: 주인
+            text: 누구에게 선물합니까?
+            translation: 送给谁？
+          - speaker: 마리아
+            text: 친구에게 선물해요. 친구가 좋아하는 꽃이에요.
+            translation: 送给朋友。是朋友喜欢的花。
+          - speaker: 주인
+            text: 여기 있습니다. 15000원입니다.
+            translation: 给您。15000韩元。
+          - speaker: 마리아
+            text: 좀 비싸요. 깎아 주세요.
+            translation: 有点贵。请给我便宜点吧。
+          - speaker: 주인
+            text: 그럼 14000원 주십시오.
+            translation: 那么请给14000韩元吧。
+
+    vocabGroups:
+      - id: VG-L06-SHOP
+        name: 가게 이름 (店铺名称)
+        kind: noun
+        items:
+          - { id: V-L06-SHOP-01, word: 꽃 가게, meaning: 花店, tags: [가게] }
+          - { id: V-L06-SHOP-02, word: 옷 가게, meaning: 服装店, tags: [가게] }
+          - { id: V-L06-SHOP-03, word: 빵 가게, meaning: 面包店, tags: [가게] }
+          - { id: V-L06-SHOP-04, word: 과일 가게, meaning: 水果店, tags: [가게] }
+          - { id: V-L06-SHOP-05, word: 서점, meaning: 书店, tags: [가게] }
+          - { id: V-L06-SHOP-06, word: 문방구, meaning: 文具店, tags: [가게] }
+          - { id: V-L06-SHOP-07, word: 편의점, meaning: 便利店, tags: [가게] }
+          - { id: V-L06-SHOP-08, word: 시장, meaning: 市场, tags: [가게] }
+          - { id: V-L06-SHOP-09, word: 백화점, meaning: 百货商店, tags: [가게] }
+          - { id: V-L06-SHOP-10, word: 슈퍼마켓, meaning: 超市, tags: [가게] }
+
+      - id: VG-L06-COLOR
+        name: 색 (颜色)
+        kind: noun
+        items:
+          - { id: V-L06-COLOR-01, word: 빨간색, meaning: 红色, tags: [색] }
+          - { id: V-L06-COLOR-02, word: 파란색, meaning: 蓝色, tags: [색] }
+          - { id: V-L06-COLOR-03, word: 노란색, meaning: 黄色, tags: [색] }
+          - { id: V-L06-COLOR-04, word: 하얀색, meaning: 白色, tags: [색] }
+          - { id: V-L06-COLOR-05, word: 까만색/검은색, meaning: 黑色, tags: [색] }
+
+      - id: VG-L06-ADJ3
+        name: 형용사 3
+        kind: adj
+        items:
+          - { id: V-L06-ADJ3-01, word: 길다, meaning: 长, tags: [형용사] }
+          - { id: V-L06-ADJ3-02, word: 짧다, meaning: 短, tags: [형용사] }
+          - { id: V-L06-ADJ3-03, word: 튼튼하다, meaning: 结实, tags: [형용사] }
+          - { id: V-L06-ADJ3-04, word: 약하다, meaning: 弱, tags: [형용사] }
+          - { id: V-L06-ADJ3-05, word: 두껍다, meaning: 厚, tags: [형용사] }
+          - { id: V-L06-ADJ3-06, word: 얇다, meaning: 薄, tags: [형용사] }
+          - { id: V-L06-ADJ3-07, word: 무겁다, meaning: 重, tags: [형용사] }
+          - { id: V-L06-ADJ3-08, word: 가볍다, meaning: 轻, tags: [형용사] }
+          - { id: V-L06-ADJ3-09, word: 비싸다, meaning: 贵, tags: [형용사] }
+          - { id: V-L06-ADJ3-10, word: 싸다, meaning: 便宜, tags: [형용사] }
+          - { id: V-L06-ADJ3-11, word: 가깝다, meaning: 近, tags: [형용사] }
+          - { id: V-L06-ADJ3-12, word: 멀다, meaning: 远, tags: [형용사] }
+
+      - id: VG-L06-UNIT
+        name: 단위 명사 (单位名词)
+        kind: noun
+        items:
+          - { id: V-L06-UNIT-01, word: 대, meaning: 台, tags: [단위] }
+          - { id: V-L06-UNIT-02, word: 잔, meaning: 杯, tags: [단위] }
+          - { id: V-L06-UNIT-03, word: 컬레, meaning: 双, tags: [단위] }
+          - { id: V-L06-UNIT-04, word: 개, meaning: 个, tags: [단위] }
+          - { id: V-L06-UNIT-05, word: 마리, meaning: 只, tags: [단위] }
+          - { id: V-L06-UNIT-06, word: 자루, meaning: 支/把, tags: [단위] }
+          - { id: V-L06-UNIT-07, word: 벌, meaning: 件, tags: [단위] }
+          - { id: V-L06-UNIT-08, word: 송이, meaning: 朵, tags: [단위] }
+          - { id: V-L06-UNIT-09, word: 권, meaning: 本, tags: [단위] }
+          - { id: V-L06-UNIT-10, word: 장, meaning: 张, tags: [단위] }
+          - { id: V-L06-UNIT-11, word: 병, meaning: 瓶, tags: [단위] }
+
+      - id: VG-L06-GIFT
+        name: 선물 (礼物)
+        kind: noun
+        items:
+          - { id: V-L06-GIFT-01, word: 꽃다발, meaning: 花束, tags: [선물] }
+          - { id: V-L06-GIFT-02, word: 손수건, meaning: 手帕, tags: [선물] }
+          - { id: V-L06-GIFT-03, word: 상품권, meaning: 商品券, tags: [선물] }
+          - { id: V-L06-GIFT-04, word: 인형, meaning: 玩偶, tags: [선물] }
+          - { id: V-L06-GIFT-05, word: 화장품, meaning: 化妆品, tags: [선물] }
+          - { id: V-L06-GIFT-06, word: 향수, meaning: 香水, tags: [선물] }
+          - { id: V-L06-GIFT-07, word: 액세서리, meaning: 饰品, tags: [선물] }
+          - { id: V-L06-GIFT-08, word: 만년필, meaning: 钢笔, tags: [선물] }
+
+    grammars:
+      - id: G-L06-01
+        name: (으) 러
+        function: 连接词尾，通常和移动性动词（가다, 오다等）连用，表示移动的目的或意图。
+        examples:
+          - { sentence: "영화를 보러 갈까요?", translation: "要去看电影吗？", focus: "보러", answer: "보러", dictionaryForm: "보다", choices: ["보고", "보려고", "보지만"], hint: "移动目的" }
+          - { sentence: "한잔 하러 갑시다.", translation: "去喝一杯吧。", focus: "하러", answer: "하러", dictionaryForm: "하다", choices: ["하고", "하려고", "하지만"], hint: "移动目的" }
+          - { sentence: "밥 먹으러 식당에 갔다 왔어요.", translation: "去食堂吃饭回来了。", focus: "먹으러", answer: "먹으러", dictionaryForm: "먹다", choices: ["먹고", "먹으려고", "먹지만"], hint: "移动目的" }
+          - { sentence: "구경하러 온 사람이 많습니다.", translation: "来参观的人很多。", focus: "구경하러", answer: "구경하러", dictionaryForm: "구경하다", choices: ["구경하고", "구경하려고", "구경하지만"], hint: "移动目的" }
+          - { sentence: "돌을 찾으러 갔습니다.", translation: "去找石头了。", focus: "찾으러", answer: "찾으러", dictionaryForm: "찾다", choices: ["찾고", "찾으려고", "찾지만"], hint: "移动目的" }
+
+      - id: G-L06-02
+        name: 과/와
+        function: 连接助词，连接体词和体词，表示并列。口语中可用“하고”代替。
+        examples: [] # 无例句留空
+
+      - id: G-L06-03
+        name: 지만
+        function: 连接词尾，用于谓词词干和体词谓词形后，表示转折。
+        examples: [] # 无例句留空
+
+      - id: G-L06-04
+        name: ㄴ/은
+        function: 定语词尾，用于形容词词干和体词谓词形后，充当修饰成分，表示事物的状态性质。
+        examples: [] # 无例句留空
+
+      - id: G-L06-05
+        name: 어/아/해 주다
+        function: 用于动词词干后，表示为某人做某事。敬语形式为“-어/아/해 드리다”。
+        examples:
+          - { sentence: "전화번호 좀 알려 주십시오.", translation: "请告诉我电话号码。", focus: "알려 주십시오", answer: "알려 주십시오", dictionaryForm: "알리다", choices: ["알립니다", "알리십시오", "알려 드리겠습니다"], hint: "为某人做(命令)" }
+          - { sentence: "이름을 써 주세요.", translation: "请写下名字。", focus: "써 주세요", answer: "써 주세요", dictionaryForm: "쓰다", choices: ["씁니다", "쓰십시오", "써 드리겠습니다"], hint: "为某人做(命令)" }
+          - { sentence: "친구에게 우산을 빌려 주었어요.", translation: "把伞借给朋友了。", focus: "빌려 주었어요", answer: "빌려 주었어요", dictionaryForm: "빌리다", choices: ["빌렸어요", "빌려 드렸어요", "빌립니다"], hint: "为某人做(过去)" }
+          - { sentence: "누가 한국말을 가르쳐 주셨어요?", translation: "谁教了你韩语？（敬语）", focus: "가르쳐 주셨어요", answer: "가르쳐 주셨어요", dictionaryForm: "가르치다", choices: ["가르쳤어요", "가르쳐 드렸어요", "가르칩니다"], hint: "为某人做(敬语)" }
+          - { sentence: "제가 도와 드리겠습니다.", translation: "我来帮您。", focus: "도와 드리겠습니다", answer: "도와 드리겠습니다", dictionaryForm: "돕다", choices: ["도와 줍니다", "도와 주겠습니다", "도와 드립니다"], hint: "为某人做(敬语/意志)" }
+
+      - id: G-L06-06
+        name: 에게
+        function: 助词，用于表示人或动物的体词后，表示宾语涉及的对象，通常和“주다, 보내다, 가르치다, 빌려주다”等动词连用。口语中用“한테”，敬语为“께”。
+        examples:
+          - { sentence: "동생에게 편지를 보냈습니다.", translation: "给弟弟寄了信。", focus: "에게", answer: "에게", choices: ["한테", "께", "에서"], hint: "对象助词" }
+          - { sentence: "친구한테 책을 빌려 주었습니다.", translation: "借给朋友书了。", focus: "한테", answer: "한테", choices: ["에게", "께", "에서"], hint: "对象助词(口语)" }
+          - { sentence: "부모님께 전화를 했습니다.", translation: "给父母打电话了。", focus: "께", answer: "께", choices: ["에게", "한테", "에서"], hint: "对象助词(敬语)" }
+          - { sentence: "저에게 한국말을 가르쳐주세요.", translation: "请教我韩语。", focus: "에게", answer: "에게", choices: ["한테", "께", "에서"], hint: "对象助词" }
+          - { sentence: "그 이야기를 미선 씨한테 하지 마세요.", translation: "请不要把那件事告诉美善。", focus: "한테", answer: "한테", choices: ["에게", "께", "에서"], hint: "对象助词(口语)" }
+
+      - id: G-L06-07
+        name: 定语词尾 는,은/ㄴ,을/ㄹ
+        function: 用于动词词干后，修饰后面的体词。已经发生的动作用은/ㄴ，正在进行的动作用는，将来发生的动作用을/ㄹ。
+        examples:
+          - { sentence: "조금 전에 부른 노래 제목이 뭐예요?", translation: "刚才唱的歌的名字是什么？", focus: "부른", answer: "부른", dictionaryForm: "부르다", choices: ["부르는", "부를", "불러서"], hint: "过去(은/ㄴ)" }
+          - { sentence: "제 친구 중에는 아직 결혼한 사람이 없어요.", translation: "我朋友中还没有结婚的人。", focus: "결혼한", answer: "결혼한", dictionaryForm: "결혼하다", choices: ["결혼하는", "결혼할", "결혼해서"], hint: "过去(은/ㄴ)" }
+          - { sentence: "지금 일하는 회사가 어디예요?", translation: "现在工作的公司在哪里？", focus: "일하는", answer: "일하는", dictionaryForm: "일하다", choices: ["일한", "일할", "일해서"], hint: "现在(는)" }
+          - { sentence: "모르는 것이 있으면 질문하세요.", translation: "有不懂的请提问。", focus: "모르는", answer: "모르는", dictionaryForm: "모르다", choices: ["모른", "모를", "몰라서"], hint: "现在(는)" }
+          - { sentence: "냉장고에 먹을 것이 하나도 없어요.", translation: "冰箱里一点吃的东西都没有。", focus: "먹을", answer: "먹을", dictionaryForm: "먹다", choices: ["먹는", "먹은", "먹어서"], hint: "将来(을/ㄹ)" }
+          - { sentence: "만날 사람이 있어서 지금 시내에 갑니다.", translation: "因为要见人，现在去市内。", focus: "만날", answer: "만날", dictionaryForm: "만나다", choices: ["만나는", "만난", "만나서"], hint: "将来(을/ㄹ)" }
+
+      - id: G-L06-08
+        name: 单位名词
+        function: 数事物时要在数词后加单位名词。根据单位名词的不同，数词的读法也不同。用“하나, 둘... ”的单位名词：用“일, 이... ”的单位名词：
+        examples: [] # 无例句留空

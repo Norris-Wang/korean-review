@@ -8,13 +8,14 @@ type Mode = "due" | "vocab" | "grammar" | "topic" | "mix";
 interface Props {
     kb: KnowledgeBase;
     units: Record<string, ReviewUnit>;
-    dueCount: number;
+    dueReviewCount: number;
+    newUnitCount: number;
     onStart: (m: Mode) => void;
     onWrongBook: () => void;
     onReset: () => void;
 }
 
-export default function Dashboard({ kb, units, dueCount, onStart, onWrongBook, onReset }: Props) {
+export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onStart, onWrongBook, onReset }: Props) {
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [logs, setLogs] = useState<AnswerLog[]>([]);
     const allUnits = Object.values(units);
@@ -164,8 +165,15 @@ export default function Dashboard({ kb, units, dueCount, onStart, onWrongBook, o
                     {/* 1. 开始学习 */}
                     <div className="card">
                         <div className="card-title">开始学习</div>
-                        <button className="btn" onClick={() => onStart("due")} disabled={dueCount === 0}>
-                            {dueCount > 0 ? `今日复习 (${dueCount} 个待复习)` : "今日任务已完成 🎉"}
+                        <button
+                            className="btn"
+                            onClick={() => onStart("due")}
+                            disabled={dueReviewCount === 0 && newUnitCount === 0}
+                        >
+                            {dueReviewCount === 0 && newUnitCount === 0
+                                ? "今日任务已完成 🎉"
+                                : `今日复习 (旧: ${dueReviewCount} / 新: ${newUnitCount})`
+                            }
                         </button>
 
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
@@ -286,21 +294,21 @@ export default function Dashboard({ kb, units, dueCount, onStart, onWrongBook, o
                         {/* 全局总数汇总 */}
                         <div className="stat-grid" style={{ gridTemplateColumns: "1fr 1fr 1fr", marginBottom: 24 }}>
                             <div className="stat-box" style={{ padding: "12px 8px" }}>
-                                <div className="stat-num" style={{ fontSize: 22 }}>{totalVocab}</div>
-                                <div className="stat-label">总词汇</div>
+                                <div className="stat-num" style={{ fontSize: 20 }}>{totalVocab}</div>
+                                <div className="stat-label">词汇</div>
                             </div>
                             <div className="stat-box" style={{ padding: "12px 8px" }}>
-                                <div className="stat-num" style={{ fontSize: 22 }}>{totalGrammar}</div>
-                                <div className="stat-label">总语法</div>
+                                <div className="stat-num" style={{ fontSize: 20 }}>{totalGrammar}</div>
+                                <div className="stat-label">语法</div>
                             </div>
                             <div className="stat-box" style={{ padding: "12px 8px" }}>
-                                <div className="stat-num" style={{ fontSize: 22 }}>{totalTopic}</div>
-                                <div className="stat-label">总对话</div>
+                                <div className="stat-num" style={{ fontSize: 20 }}>{totalTopic}</div>
+                                <div className="stat-label">对话</div>
                             </div>
                         </div>
 
                         {/* 每一课的具体信息 */}
-                        <div style={{ maxHeight: "300px", overflowY: "auto", paddingRight: 4 }}>
+                        <div style={{ maxHeight: "150px", overflowY: "auto", paddingRight: 4 }}>
                             {courseStats.map(c => (
                                 <div key={c.id} style={{ marginBottom: 16 }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 4 }}>

@@ -123,27 +123,17 @@ lessons:
     grammars:
       - id: G-L01-01
         name: 입니다
-        function: 表示身份、状态或指定，正式体
+        function: 이다 是谓格助词，用来表示事物的身份、状态或指定某个事物，附于体词后充当谓语。正式场合用“입니다”。
         examples:
           - { sentence: "저는 학생입니다.", translation: "我是学生。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
           - { sentence: "여기가 우리 집입니다.", translation: "这里是我们的家。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
           - { sentence: "그분은 의사입니다.", translation: "那位是医生。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
           - { sentence: "이것은 제 책상입니다.", translation: "这是我的书桌。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
           - { sentence: "이 아이가 제 딸입니다.", translation: "这个孩子是我的女儿。", focus: "입니다", answer: "입니다", choices: ["입니까", "이 아닙니다", "습니다"], hint: "肯定陈述" }
-
-      - id: G-L01-03
-        name: 입니까?
-        function: 입니다 的疑问形式
-        examples:
-          - { sentence: "이분이 어느 나라 사람입니까?", translation: "这位是哪国人？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
-          - { sentence: "지금이 두 시입니까?", translation: "现在是两点吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
-          - { sentence: "여기가 신촌입니까?", translation: "这里是新村吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
-          - { sentence: "이 책은 누구 책입니까?", translation: "这本书是谁的书？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
-          - { sentence: "오늘이 며칠입니까?", translation: "今天几号？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
-          
+         
       - id: G-L01-02
         name: 은/는
-        function: 表示陈述主体或话题，可表对比强调
+        function: 补助词，表示陈述的主体或讨论的话题。可表示对比或强调。은/는可以和所有助词结合。加在主格助词或宾格助词后时，主格助词或宾格助词可省略；加在其他助词后，其他助词不能省略。
         examples:
           - { sentence: "서울은 한국의 수도입니다.", translation: "首尔是韩国的首都。", focus: "은", answer: "은", choices: ["는", "이", "가"] }
           - { sentence: "저는 한국 사람입니다.", translation: "我是韩国人。", focus: "는", answer: "는", choices: ["은", "이", "가"] }
@@ -154,15 +144,15 @@ lessons:
         name: 입니까?
         function: 입니다 的疑问形式
         examples:
-          - { sentence: "이분이 어느 나라 사람입니까?", translation: "这位是哪国人？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是哪国人？" }
-          - { sentence: "지금이 두 시입니까?", translation: "现在是两点吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是两点吗？" }
-          - { sentence: "여기가 신촌입니까?", translation: "这里是新村吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是新村吗？" }
-          - { sentence: "이 책은 누구 책입니까?", translation: "这本书是谁的书？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：是谁的书？" }
-          - { sentence: "오늘이 며칠입니까?", translation: "今天几号？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问：几号？" }
-
+          - { sentence: "이분이 어느 나라 사람입니까?", translation: "这位是哪国人？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "지금이 두 시입니까?", translation: "现在是两点吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "여기가 신촌입니까?", translation: "这里是新村吗？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "이 책은 누구 책입니까?", translation: "这本书是谁的书？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+          - { sentence: "오늘이 며칠입니까?", translation: "今天几号？", focus: "입니까", answer: "입니까", choices: ["입니다", "이 아닙니다", "습니까"], hint: "疑问" }
+ 
       - id: G-L01-04
         name: 이/가 아니다
-        function: 이다 的否定形式
+        function: 이다 的否定形式，与体词连用
         examples:
           - { sentence: "저는 일본 사람이 아닙니다.", translation: "我不是日本人。", focus: "이 아닙니다", answer: "이 아닙니다", accept: ["이 아닙니다", "이 아니에요"], choices: ["입니다", "입니까", "이 아닙니까"], hint: "否定" }
           - { sentence: "존순 씨는 의사가 아닙니다.", translation: "尊顺不是医生。", focus: "가 아닙니다", answer: "가 아닙니다", choices: ["입니다", "입니까", "가 아닙니까"], hint: "否定" }
@@ -172,7 +162,7 @@ lessons:
 
       - id: G-L01-05
         name: -습니다/ㅂ니다
-        function: 谓词正式体陈述终结词尾
+        function: 描述动作或状态，和谓词词干连用
         examples:
           - { sentence: "학교에 갑니다.", translation: "去学校。", focus: "갑니다", answer: "갑니다", dictionaryForm: "가다", choices: ["갑니까", "갔습니다", "가요"], hint: "습니다/ㅂ니다" }
           - { sentence: "저는 키가 큽니다.", translation: "我个子高。", focus: "큽니다", answer: "큽니다", dictionaryForm: "크다", choices: ["큽니까", "컸습니다", "커요"], hint: "습니다/ㅂ니다" }
@@ -182,7 +172,7 @@ lessons:
 
       - id: G-L01-06
         name: -습니까?/ㅂ니까?
-        function: 谓词正式体疑问终结词尾
+        function: 对动作或状态提问，和谓词词干连用
         examples:
           - { sentence: "무엇을 합니까?", translation: "做什么？", focus: "합니까", answer: "합니까", dictionaryForm: "하다", choices: ["합니다", "했습니다", "해요"], hint: "습니까/ㅂ니까" }
           - { sentence: "어디에 갑니까?", translation: "去哪里？", focus: "갑니까", answer: "갑니까", dictionaryForm: "가다", choices: ["갑니다", "갔습니다", "가요"], hint: "습니까/ㅂ니까" }

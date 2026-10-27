@@ -1,0 +1,210 @@
+version: "1.0"
+
+lessons:
+  - id: L07
+    title: 제7과 교통
+    order: 7
+
+    topics:
+      - id: T-L07-01
+        title: 실례지만 길 좀 묻겠습니다
+        turns:
+          - speaker: 제임스
+            text: 실례지만 길 좀 묻겠습니다.
+            translation: 打扰一下，我想问个路。
+          - speaker: 남자
+            text: 어딜 찾으세요?
+            translation: 您在找哪里？
+          - speaker: 제임스
+            text: 연세 아파트가 어디에 있습니까?
+            translation: 延世公寓在哪里？
+          - speaker: 남자
+            text: 잠실역 근처에 있습니다.
+            translation: 在蚕室站附近。
+          - speaker: 제임스
+            text: 잠실역에서 어떻게 갑니까?
+            translation: 从蚕室站怎么去？
+          - speaker: 남자
+            text: 잠실역 6번 출구로 나가서 왼쪽으로 가세요.
+            translation: 从蚕室站6号出口出去，往左边走。
+
+      - id: T-L07-02
+        title: 지하철로 40분쯤 걸립니다
+        turns:
+          - speaker: 리에
+            text: 여기에서 잠실까지 얼마나 걸려요?
+            translation: 从这里到蚕室要多久？
+          - speaker: 남자
+            text: 지하철로 40분쯤 걸립니다.
+            translation: 坐地铁大概需要40分钟。
+          - speaker: 리에
+            text: 몇 호선을 타요?
+            translation: 坐几号线？
+          - speaker: 남자
+            text: 2호선을 타세요.
+            translation: 请坐2号线。
+          - speaker: 리에
+            text: 버스는 없어요?
+            translation: 没有公交车吗？
+          - speaker: 남자
+            text: 교통이 복잡해서 시간이 많이 걸립니다.
+            translation: 交通很复杂，所以花的时间会很长。
+
+      - id: T-L07-03
+        title: 사람이 많으니까 조심하세요
+        turns:
+          - speaker: 리에
+            text: 여기 앉을까요?
+            translation: 要坐这里吗？
+          - speaker: 제임스
+            text: 아니요, 앉지 마세요. 다음 역에서 내려요.
+            translation: 不，请不要坐。在下一站下车。
+          - speaker: 리에
+            text: 그럼 문 앞으로 나갈까요?
+            translation: 那么要往门前走吗？
+          - speaker: 제임스
+            text: 네, 저쪽으로 갑시다.
+            translation: 是的，往那边走吧。
+          - speaker: 리에
+            text: 내립니다. 좀 비켜 주십시오.
+            translation: 要下车了。请让一让。
+          - speaker: 제임스
+            text: 사람이 많으니까 조심하세요.
+            translation: 人很多，请小心。
+
+      - id: T-L07-04
+        title: 과일 가게 앞에 세워 주세요
+        turns:
+          - speaker: 제임스
+            text: 걸어서 갈까요?
+            translation: 要走着去吗？
+          - speaker: 리에
+            text: 머니까 택시를 탑시다.
+            translation: 太远了，坐出租车吧。
+          - speaker: 기사
+            text: 어디로 갈까요?
+            translation: 要去哪里？
+          - speaker: 제임스
+            text: 연세 아파트로 갑시다.
+            translation: 去延世公寓吧。
+          - speaker: 기사
+            text: 어디에 세워 드릴까요?
+            translation: 给您停在哪里？
+          - speaker: 제임스
+            text: 안으로 들어가서 과일 가게 앞에 세워 주세요.
+            translation: 请开进去，停在水果店前面。
+
+    vocabGroups:
+      - id: VG-L07-DIR
+        name: 방향 (方向)
+        kind: noun
+        items:
+          - { id: V-L07-DIR-01, word: 이쪽, meaning: 这边, tags: [방향] }
+          - { id: V-L07-DIR-02, word: 그쪽, meaning: 那边, tags: [방향] }
+          - { id: V-L07-DIR-03, word: 저쪽, meaning: 那边（远）, tags: [방향] }
+          - { id: V-L07-DIR-04, word: 왼쪽, meaning: 左边, tags: [방향] }
+          - { id: V-L07-DIR-05, word: 오른쪽, meaning: 右边, tags: [방향] }
+
+      - id: VG-L07-TRANS
+        name: 교통수단 (交通工具)
+        kind: noun
+        items:
+          - { id: V-L07-TRANS-01, word: 지하철, meaning: 地铁, tags: [교통수단] }
+          - { id: V-L07-TRANS-02, word: 택시, meaning: 出租车, tags: [교통수단] }
+          - { id: V-L07-TRANS-03, word: 자동차, meaning: 汽车, tags: [교통수단] }
+          - { id: V-L07-TRANS-04, word: 기차, meaning: 火车, tags: [교통수단] }
+          - { id: V-L07-TRANS-05, word: 자전거, meaning: 自行车, tags: [교통수단] }
+          - { id: V-L07-TRANS-06, word: 비행기, meaning: 飞机, tags: [교통수단] }
+          - { id: V-L07-TRANS-07, word: 배, meaning: 船, tags: [교통수단] }
+          - { id: V-L07-TRANS-08, word: 버스, meaning: 公交车, tags: [교통수단] }
+          - { id: V-L07-TRANS-09, word: 시내버스, meaning: 市内公交, tags: [교통수단] }
+          - { id: V-L07-TRANS-10, word: 고속버스, meaning: 高速巴士, tags: [교통수단] }
+          - { id: V-L07-TRANS-11, word: 마을버스, meaning: 乡下巴士, tags: [교통수단] }
+
+      - id: VG-L07-PLACE
+        name: 교통수단 이용 장소 (利用交通工具的场所)
+        kind: noun
+        items:
+          - { id: V-L07-PLACE-01, word: 역, meaning: 站, tags: [장소] }
+          - { id: V-L07-PLACE-02, word: 정류장, meaning: 公交站, tags: [장소] }
+          - { id: V-L07-PLACE-03, word: 공항, meaning: 机场, tags: [장소] }
+          - { id: V-L07-PLACE-04, word: 버스 터미널, meaning: 客运站, tags: [장소] }
+
+      - id: VG-L07-VERB
+        name: 교통 관련 동사
+        kind: verb
+        items:
+          - { id: V-L07-VERB-01, word: 타다, meaning: 乘坐, tags: [동사] }
+          - { id: V-L07-VERB-02, word: 내리다, meaning: 下车, tags: [동사] }
+          - { id: V-L07-VERB-03, word: 갈아타다, meaning: 换乘, tags: [동사] }
+          - { id: V-L07-VERB-04, word: 출발하다, meaning: 出发, tags: [동사] }
+          - { id: V-L07-VERB-05, word: 도착하다, meaning: 到达, tags: [동사] }
+          - { id: V-L07-VERB-06, word: 세우다, meaning: 停车, tags: [동사] }
+
+    grammars:
+      - id: G-L07-01
+        name: (으) 로 (方向)
+        function: 助词，用于处所名词后，表示移动方向或目的地。后面通常接“가다, 오다, 돌아가다, 돌나오다”等动词。以元音或ㄹ结尾用로，辅音结尾用으로。
+        examples:
+          - { sentence: "어디로 가십니까?", translation: "去哪里？", focus: "로", answer: "로", choices: ["으로", "에", "에서"], hint: "移动方向" }
+          - { sentence: "사무실로 갑니다.", translation: "去办公室。", focus: "로", answer: "로", choices: ["으로", "에", "에서"], hint: "移动方向" }
+          - { sentence: "식당으로 갑시다.", translation: "去食堂吧。", focus: "으로", answer: "으로", choices: ["로", "에", "에서"], hint: "移动方向" }
+
+      - id: G-L07-02
+        name: 어서/아서/해서 (连贯)
+        function: 连接词尾，用于谓词词干和体词谓词形后，表示后面动作或状态在某种情况下完成。
+        examples:
+          - { sentence: "야채를 씻어서 냉장고에 넣었습니다.", translation: "把蔬菜洗了放进冰箱。", focus: "씻어서", answer: "씻어서", dictionaryForm: "씻다", choices: ["씻고", "씻으니까", "씻지만"], hint: "动作连贯" }
+          - { sentence: "편지를 써서 버렸습니다.", translation: "写了信扔掉了。", focus: "써서", answer: "써서", dictionaryForm: "쓰다", choices: ["쓰고", "쓰니까", "쓰지만"], hint: "动作连贯" }
+          - { sentence: "여기에 앉아서 기다리십시오.", translation: "请坐在这里等。", focus: "앉아서", answer: "앉아서", dictionaryForm: "앉다", choices: ["앉고", "앉으니까", "앉지만"], hint: "动作连贯" }
+          - { sentence: "집에 가서 점심을 먹습니다.", translation: "回家吃午饭。", focus: "가서", answer: "가서", dictionaryForm: "가다", choices: ["가고", "가니까", "가지만"], hint: "动作连贯" }
+          - { sentence: "아침에 일어나서 운동을 하세요?", translation: "早上起来运动吗？", focus: "일어나서", answer: "일어나서", dictionaryForm: "일어나다", choices: ["일어나고", "일어나니까", "일어나지만"], hint: "动作连贯" }
+
+      - id: G-L07-03
+        name: (으) 로 (方式)
+        function: 助词，用于体词后，表示方式、原因、资格等。
+        examples:
+          - { sentence: "젓가락으로 먹습니다.", translation: "用筷子吃。", focus: "으로", answer: "으로", choices: ["로", "에", "에서"], hint: "方式/手段" }
+          - { sentence: "한국말로 말하십시오.", translation: "请用韩语说。", focus: "로", answer: "로", choices: ["으로", "에", "에서"], hint: "方式/手段" }
+          - { sentence: "버스로 왔습니다.", translation: "坐公交车来的。", focus: "로", answer: "로", choices: ["으로", "에", "에서"], hint: "方式/手段" }
+          - { sentence: "연필로 씁니다.", translation: "用铅笔写。", focus: "로", answer: "로", choices: ["으로", "에", "에서"], hint: "方式/手段" }
+          - { sentence: "김치는 배추로 만듭니다.", translation: "泡菜是用白菜做的。", focus: "로", answer: "로", choices: ["으로", "에", "에서"], hint: "材料/方式" }
+
+      - id: G-L07-04
+        name: 에서~까지
+        function: 用于表示、处所的词后。
+        examples:
+          - { sentence: "여기서 종로까지 걷습니다.", translation: "从这里走到钟路。", focus: "까지", answer: "까지", choices: ["부터", "에", "에서"], hint: "地点终点" }
+          - { sentence: "서울에서 부산까지 기차로 5시간 걸립니다.", translation: "从首尔到釜山坐火车需要5个小时。", focus: "까지", answer: "까지", choices: ["부터", "에", "에서"], hint: "地点终点" }
+          - { sentence: "1층에서 5층까지 교실입니다.", translation: "1楼到5楼是教室。", focus: "까지", answer: "까지", choices: ["부터", "에", "에서"], hint: "地点终点" }
+          - { sentence: "12시에서 1시까지 점심시간입니다.", translation: "12点到1点是午餐时间。", focus: "까지", answer: "까지", choices: ["부터", "에", "에서"], hint: "时间终点" }
+          - { sentence: "저녁 7시에서 9시까지 식당에서 아르바이트를 합니다.", translation: "晚上7点到9点在餐厅打工。", focus: "까지", answer: "까지", choices: ["부터", "에", "에서"], hint: "时间终点" }
+
+      - id: G-L07-05
+        name: 어서/아서/해서 (原因)
+        function: 连接词尾，用于谓词词干后，表示动作的连贯或原因。表示原因时，终结谓语不能用于命令句或共动句。时制词尾“-었/았/했-”和“-겠-”不能用于前句。
+        examples:
+          - { sentence: "한국이 좋아서 한국에 왔습니다.", translation: "因为喜欢韩国，所以来韩国了。", focus: "좋아서", answer: "좋아서", dictionaryForm: "좋다", choices: ["좋고", "좋으니까", "좋지만"], hint: "原因" }
+          - { sentence: "배가 아파서 약을 먹었습니다.", translation: "因为肚子痛，所以吃药了。", focus: "아파서", answer: "아파서", dictionaryForm: "아프다", choices: ["아프고", "아프니까", "아프지만"], hint: "原因" }
+          - { sentence: "옷을 많이 입어서 덥습니다.", translation: "因为穿了很多衣服，所以很热。", focus: "입어서", answer: "입어서", dictionaryForm: "입다", choices: ["입고", "입으니까", "입지만"], hint: "原因" }
+          - { sentence: "약속을 안 지켜서 죄송합니다.", translation: "很抱歉没有遵守约定。", focus: "지켜서", answer: "지켜서", dictionaryForm: "지키다", choices: ["지키고", "지키니까", "지키지만"], hint: "原因" }
+          - { sentence: "피곤해서 일찍 집에 갔습니다.", translation: "因为太累了，所以早点回家了。", focus: "피곤해서", answer: "피곤해서", dictionaryForm: "피곤하다", choices: ["피곤하고", "피곤하니까", "피곤하지만"], hint: "原因" }
+
+      - id: G-L07-06
+        name: (으) 니까
+        function: 连接词尾，与谓词词干和体词谓词形连用，表示前句是后句的原因，或进行前面的动作后才知道后面的情况。
+        examples:
+          - { sentence: "오늘은 일이 많으니까 내일 만납시다.", translation: "今天事情很多，明天见吧。", focus: "많으니까", answer: "많으니까", dictionaryForm: "많다", choices: ["많아서", "많고", "많지만"], hint: "主观原因" }
+          - { sentence: "날씨가 추우니까 안으로 들어가세요.", translation: "天气冷，请进里面吧。", focus: "추우니까", answer: "추우니까", dictionaryForm: "춥다", choices: ["추워서", "춥고", "춥지만"], hint: "主观原因" }
+          - { sentence: "담배는 건강에 나쁘니까 피우지 마십시오.", translation: "抽烟对健康不好，请不要抽。", focus: "나쁘니까", answer: "나쁘니까", dictionaryForm: "나쁘다", choices: ["나빠서", "나쁘고", "나쁘지만"], hint: "主观原因" }
+          - { sentence: "오늘은 눈이 많이 오니까 자동차를 운전하지 마세요.", translation: "今天雪下得很大，请不要开车。", focus: "오니까", answer: "오니까", dictionaryForm: "오다", choices: ["와서", "오고", "오지만"], hint: "主观原因" }
+
+      - id: G-L07-07
+        name: 지 말다
+        function: 与动词词干连用，表示对行为的禁止。是命令句“- (으) 십시오”和共动句“-읍시다”的否定形式。
+        examples:
+          - { sentence: "건물 안에서 담배를 피우지 마십시오.", translation: "请不要在建筑物内吸烟。", focus: "피우지 마십시오", answer: "피우지 마십시오", dictionaryForm: "피우다", choices: ["피우십시오", "피웁니다", "피우지 않습니다"], hint: "禁止" }
+          - { sentence: "도서관에서 떠들지 마세요.", translation: "请不要在图书馆喧哗。", focus: "떠들지 마세요", answer: "떠들지 마세요", dictionaryForm: "떠들다", choices: ["떠드세요", "떠듭니다", "떠들지 않습니다"], hint: "禁止" }
+          - { sentence: "박물관에서 사진을 찍지 마십시오.", translation: "请不要在博物馆拍照。", focus: "찍지 마십시오", answer: "찍지 마십시오", dictionaryForm: "찍다", choices: ["찍으십시오", "찍습니다", "찍지 않습니다"], hint: "禁止" }
+          - { sentence: "교실에서 영어로 말하지 맙시다.", translation: "在教室里不要说英语吧。", focus: "말하지 맙시다", answer: "말하지 맙시다", dictionaryForm: "말하다", choices: ["말합시다", "말하십시오", "말하지 않습니다"], hint: "禁止(共动)" }
+          - { sentence: "쓰레기를 버리지 맙시다.", translation: "不要扔垃圾吧。", focus: "버리지 맙시다", answer: "버리지 맙시다", dictionaryForm: "버리다", choices: ["버립시다", "버리십시오", "버리지 않습니다"], hint: "禁止(共动)" }

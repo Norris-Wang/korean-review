@@ -1,0 +1,194 @@
+version: "1.0"
+
+lessons:
+  - id: L03
+    title: 제3과 가족과 친구
+    order: 3
+
+    topics:
+      - id: T-L03-01
+        title: 가족 사진을 봅니다
+        turns:
+          - speaker: 민철
+            text: 제임스 씨, 무엇을 합니까?
+            translation: 詹姆斯，你在做什么？
+          - speaker: 제임스
+            text: 가족 사진을 봅니다.
+            translation: 在看家族照片。
+          - speaker: 민철
+            text: 사진을 자주 봅니까?
+            translation: 经常看照片吗？
+          - speaker: 제임스
+            text: 아니요, 가끔 봅니다.
+            translation: 不，偶尔看。
+
+      - id: T-L03-02
+        title: 부모님은 어디에 계십니까?
+        turns:
+          - speaker: 민철
+            text: 가족이 몇 명입니까?
+            translation: 家里有几口人？
+          - speaker: 제임스
+            text: 아버지, 어머니, 누나 그리고 저 모두 네 사람입니다.
+            translation: 爸爸、妈妈、姐姐还有我，一共四个人。
+          - speaker: 민철
+            text: 부모님은 어디에 계십니까?
+            translation: 父母在哪里？
+          - speaker: 제임스
+            text: 고향에 계십니다.
+            translation: 在故乡。
+
+      - id: T-L03-03
+        title: 공기도 좋고 조용합니다
+        turns:
+          - speaker: 민철
+            text: 여기가 고향입니까?
+            translation: 这里是故乡吗？
+          - speaker: 제임스
+            text: 네, 우리 고향에는 산이 많습니다.
+            translation: 是的，我们故乡山很多。
+          - speaker: 민철
+            text: 공기가 좋습니까?
+            translation: 空气好吗？
+          - speaker: 제임스
+            text: 네. 공기도 좋고 조용합니다.
+            translation: 是的。空气也好，也很安静。
+
+      - id: T-L03-04
+        title: 대학교에서 경제학을 공부합니다
+        turns:
+          - speaker: 민철
+            text: 고향에 한국 친구가 있습니까?
+            translation: 故乡有韩国朋友吗？
+          - speaker: 제임스
+            text: 네, 한 명 있습니다.
+            translation: 是的，有一名。
+          - speaker: 민철
+            text: 그 친구는 무엇을 합니까?
+            translation: 那个朋友做什么？
+          - speaker: 제임스
+            text: 대학교에서 경제학을 공부합니다.
+            translation: 在大学学习经济学。
+
+    vocabGroups:
+      - id: VG-L03-V2
+        name: 동사 2
+        kind: verb
+        items:
+          - { id: V-L03-V2-01, word: 일하다, meaning: 工作, tags: [동사] }
+          - { id: V-L03-V2-02, word: 공부하다, meaning: 学习, tags: [동사] }
+          - { id: V-L03-V2-03, word: 숙제하다, meaning: 做作业, tags: [동사] }
+          - { id: V-L03-V2-04, word: 이야기하다, meaning: 讲故事, tags: [동사] }
+          - { id: V-L03-V2-05, word: 노래하다, meaning: 唱歌, tags: [동사] }
+          - { id: V-L03-V2-06, word: 운동하다, meaning: 运动, tags: [동사] }
+          - { id: V-L03-V2-07, word: 산책하다, meaning: 散步, tags: [동사] }
+
+      - id: VG-L03-FAM
+        name: 가족
+        kind: noun
+        items:
+          - { id: V-L03-FAM-01, word: (친)할아버지, meaning: 爷爷, tags: [가족] }
+          - { id: V-L03-FAM-02, word: (친)할머니, meaning: 奶奶, tags: [가족] }
+          - { id: V-L03-FAM-03, word: 외할아버지, meaning: 外公, tags: [가족] }
+          - { id: V-L03-FAM-04, word: 외할머니, meaning: 外婆, tags: [가족] }
+          - { id: V-L03-FAM-05, word: 부모, meaning: 父母, tags: [가족] }
+          - { id: V-L03-FAM-06, word: 아버지, meaning: 爸爸, tags: [가족] }
+          - { id: V-L03-FAM-07, word: 어머니, meaning: 妈妈, tags: [가족] }
+          - { id: V-L03-FAM-08, word: 형제, meaning: 兄弟, tags: [가족] }
+          - { id: V-L03-FAM-09, word: 형/오빠, meaning: 哥哥, tags: [가족] }
+          - { id: V-L03-FAM-10, word: 누나/언니, meaning: 姐姐, tags: [가족] }
+          - { id: V-L03-FAM-11, word: 남동생, meaning: 弟弟, tags: [가족] }
+          - { id: V-L03-FAM-12, word: 여동생, meaning: 妹妹, tags: [가족] }
+          - { id: V-L03-FAM-13, word: 고모, meaning: 姑妈, tags: [가족] }
+          - { id: V-L03-FAM-14, word: 이모, meaning: 姨妈, tags: [가족] }
+          - { id: V-L03-FAM-15, word: 삼촌, meaning: 叔叔, tags: [가족] }
+          - { id: V-L03-FAM-16, word: 외삼촌, meaning: 舅舅, tags: [가족] }
+          - { id: V-L03-FAM-17, word: 아줌마, meaning: 阿姨/大婶, tags: [가족] }
+          - { id: V-L03-FAM-18, word: 아저씨, meaning: 叔叔/大叔, tags: [가족] }
+          - { id: V-L03-FAM-19, word: 아가씨, meaning: 小姐, tags: [가족] }
+
+      - id: VG-L03-HON
+        name: 존대어
+        kind: verb
+        items:
+          - { id: V-L03-HON-01, word: 계시다, meaning: 在（있다的敬语）, tags: [존대어] }
+          - { id: V-L03-HON-02, word: 주무시다, meaning: 睡（자다的敬语）, tags: [존대어] }
+          - { id: V-L03-HON-03, word: 잡수시다/드시다, meaning: 吃（먹다的敬语）, tags: [존대어] }
+          - { id: V-L03-HON-04, word: 말씀하시다, meaning: 说（말하다的敬语）, tags: [존대어] }
+
+      - id: VG-L03-NUM
+        name: 수 1 (하다-열)
+        kind: noun
+        items:
+          - { id: V-L03-NUM-01, word: 하나, meaning: 一, tags: [수] }
+          - { id: V-L03-NUM-02, word: 둘, meaning: 二, tags: [수] }
+          - { id: V-L03-NUM-03, word: 셋, meaning: 三, tags: [수] }
+          - { id: V-L03-NUM-04, word: 넷, meaning: 四, tags: [수] }
+          - { id: V-L03-NUM-05, word: 다섯, meaning: 五, tags: [수] }
+          - { id: V-L03-NUM-06, word: 여섯, meaning: 六, tags: [수] }
+          - { id: V-L03-NUM-07, word: 일곱, meaning: 七, tags: [수] }
+          - { id: V-L03-NUM-08, word: 여덟, meaning: 八, tags: [수] }
+          - { id: V-L03-NUM-09, word: 아홉, meaning: 九, tags: [수] }
+          - { id: V-L03-NUM-10, word: 열, meaning: 十, tags: [수] }
+
+      - id: VG-L03-ADJ2
+        name: 형용사 2
+        kind: adj
+        items:
+          - { id: V-L03-ADJ2-01, word: 깨끗하다, meaning: 干净, tags: [형용사] }
+          - { id: V-L03-ADJ2-02, word: 더럽다, meaning: 脏, tags: [형용사] }
+          - { id: V-L03-ADJ2-03, word: 조용하다, meaning: 安静, tags: [형용사] }
+          - { id: V-L03-ADJ2-04, word: 시끄럽다, meaning: 吵闹, tags: [형용사] }
+          - { id: V-L03-ADJ2-05, word: 넓다, meaning: 宽, tags: [형용사] }
+          - { id: V-L03-ADJ2-06, word: 좁다, meaning: 窄, tags: [형용사] }
+          - { id: V-L03-ADJ2-07, word: 춥다, meaning: 冷, tags: [형용사] }
+          - { id: V-L03-ADJ2-08, word: 덥다, meaning: 热, tags: [형용사] }
+          - { id: V-L03-ADJ2-09, word: 시원하다, meaning: 凉爽, tags: [형용사] }
+          - { id: V-L03-ADJ2-10, word: 따뜻하다, meaning: 暖和, tags: [형용사] }
+          - { id: V-L03-ADJ2-11, word: 예쁘다, meaning: 漂亮, tags: [형용사] }
+          - { id: V-L03-ADJ2-12, word: 복잡하다, meaning: 复杂/乱, tags: [형용사] }
+
+      - id: VG-L03-MAJ
+        name: 전공
+        kind: noun
+        items:
+          - { id: V-L03-MAJ-01, word: 역사학, meaning: 历史学, tags: [전공] }
+          - { id: V-L03-MAJ-02, word: 컴퓨터공학, meaning: 计算机工程, tags: [전공] }
+          - { id: V-L03-MAJ-03, word: 정치학, meaning: 政治学, tags: [전공] }
+          - { id: V-L03-MAJ-04, word: 법학, meaning: 法学, tags: [전공] }
+          - { id: V-L03-MAJ-05, word: 의학, meaning: 医学, tags: [전공] }
+          - { id: V-L03-MAJ-06, word: 생물학, meaning: 生物学, tags: [전공] }
+          - { id: V-L03-MAJ-07, word: 영문학, meaning: 英国文学, tags: [전공] }
+          - { id: V-L03-MAJ-08, word: 경영학, meaning: 经营学, tags: [전공] }
+          - { id: V-L03-MAJ-09, word: 경제학, meaning: 经济学, tags: [전공] }
+
+    grammars:
+      - id: G-L03-01
+        name: 을/를
+        function: 宾格助词
+        examples: []
+
+      - id: G-L03-02
+        name: -(으) 시-
+        function: 尊称词尾，用于谓词词干后，表示对主语的尊敬。常与敬语主格助词 께서 一起使用。
+        examples:
+          - { sentence: "어머니께서 가십니다.", translation: "母亲去。", focus: "가십니다", answer: "가십니다", dictionaryForm: "가다", choices: ["갑니다", "가십니까", "가셨습니다"], hint: "-(으) 시-" }
+          - { sentence: "김 선생님께서 가르치십니다.", translation: "金老师教课。", focus: "가르치십니다", answer: "가르치십니다", dictionaryForm: "가르치다", choices: ["가르칩니다", "가르치십니까", "가르치셨습니다"], hint: "-(으) 시-" }
+          - { sentence: "아버지께서는 신문을 읽었습니다.", translation: "父亲读了报纸。", focus: "읽었습니다", answer: "읽었습니다", dictionaryForm: "읽다", choices: ["읽습니다", "읽으십니다", "읽었습니까"], hint: "-(으) 시-" }
+          - { sentence: "무슨 영화를 보셨습니까?", translation: "看了什么电影？", focus: "보셨습니까", answer: "보셨습니까", dictionaryForm: "보다", choices: ["봅니다", "보십니까", "보았습니다"], hint: "-(으) 시-" }
+          - { sentence: "내일 회사에 가시겠습니까?", translation: "明天去公司吗？", focus: "가시겠습니까", answer: "가시겠습니까", dictionaryForm: "가다", choices: ["갑니다", "가십니다", "갔습니다"], hint: "-(으) 시-" }
+
+      - id: G-L03-03
+        name: 수 1
+        function: 数词
+        examples: []
+
+      - id: G-L03-04
+        name: 고
+        function: 连接词尾，用于谓词词干和体词谓词形之后，表示罗列两种及以上的状态或事实
+        examples: []
+
+      - id: G-L03-05
+        name: 에서
+        function: 副词格助词，表示动作进行的场所
+        examples: []

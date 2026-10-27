@@ -3,7 +3,8 @@ import { db } from "../db/db";
 import type { ReviewUnit } from "../review/units";
 import type { KnowledgeBase } from "../data/schema";
 import type { GeneratedQuestion } from "../generators/types";
-import { generateFor, normalize } from "../generators";
+import { generateFor } from "../generators";
+import { MCQuestion, FillQuestion } from "../components/QuizCards";
 
 interface WrongItem {
     unitKey: string;
@@ -121,7 +122,11 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
                     </button>
                 </header>
                 <div className="card">
-                    <ReviewQuestion q={q} answered={!!feedback} onAnswer={handleAnswer} />
+                    {q.choices ? (
+                        <MCQuestion q={q} answered={!!feedback} onAnswer={handleAnswer} />
+                    ) : (
+                        <FillQuestion q={q} answered={!!feedback} onAnswer={handleAnswer} />
+                    )}
                 </div>
                 {feedback && (
                     <div className="card">
@@ -214,53 +219,5 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
                 </div>
             )}
         </div>
-    );
-}
-
-// 复用答题组件（简化版，只支持选择/填空，排序题错题较少见，先降级为跳过）
-function ReviewQuestion({ q, answered, onAnswer }: {
-    q: GeneratedQuestion;
-    answered: boolean;
-    onAnswer: (correct: boolean) => void;
-}) {
-    const [picked, setPicked] = useState<string | null>(null);
-    const [val, setVal] = useState("");
-
-    if (q.choices) {
-        return (
-            <>
-                <div className="prompt small">{q.prompt}</div>
-                {q.choices.map(c => {
-                    let cls = "option";
-                    if (answered) {
-                        if (c === q.answer) cls += " correct";
-                        else if (c === picked) cls += " wrong";
-                    }
-                    return (
-                        <button key={c} className={cls} disabled={answered}
-                            onClick={() => { setPicked(c); onAnswer(c === q.answer); }}>
-                            {c}
-                        </button>
-                    );
-                })}
-            </>
-        );
-    }
-
-    function submit() {
-        if (answered) return;
-        const pool = [q.answer, ...(q.accept || [])].map(normalize);
-        onAnswer(pool.includes(normalize(val)));
-    }
-
-    return (
-        <>
-            <div className="prompt small">{q.prompt}</div>
-            <input type="text" value={val} disabled={answered}
-                onChange={e => setVal(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter") submit(); }}
-                autoFocus autoComplete="off" />
-            <button className="btn" disabled={answered} onClick={submit}>提交</button>
-        </>
     );
 }
