@@ -299,3 +299,26 @@ input[type="text"]:focus {
 .btn.danger:hover:not(:disabled) {
     background: #c41e1e;
 }
+
+.practice-select {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 8px;
+    margin-bottom: 22px;
+
+    font-size: 16px;
+    color: #1d1d1f;
+    background: #fff;
+
+    border: 1px solid #d2d2d7;
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.practice-select:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+}

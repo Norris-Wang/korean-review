@@ -20,7 +20,7 @@ export function generateFor(
             if (!v) continue;
             if (unit.direction === "kr2zh") return genVocabKr2Zh(v, kb);
             if (unit.direction === "zh2kr") return genVocabZh2Kr(v, kb);
-            if (unit.direction === "fill") return genVocabFill(v);
+            if (unit.direction === "fill") return genVocabFill(v, kb);
         }
     }
 

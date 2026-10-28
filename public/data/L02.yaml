@@ -162,7 +162,7 @@ lessons:
         name: 이/가
         function: 主格助词，用于体词后表示主语。注意人称代词 나, 너, 저 及疑问代词 누구 与 가 结合时发生变形
         examples:
-          - { sentence: "이것이 책상입니다.", translation: "这是书桌。", focus: "이", answer: "이", dictionaryForm: "이/가", choices: ["가", "은", "는"], hint: "主语" }
+          - { sentence: "이것이 책상입니다.", translation: "这是书桌。", focus: "이", cloze: "이것{이} 책상입니다.", answer: "이", dictionaryForm: "이/가", choices: ["가", "은", "는"], hint: "主语" }
           - { sentence: "여기가 학교입니다.", translation: "这里是学校。", focus: "가", answer: "가", dictionaryForm: "이/가", choices: ["이", "은", "는"], hint: "主语" }
           - { sentence: "친구가 많습니다.", translation: "朋友很多。", focus: "가", answer: "가", dictionaryForm: "이/가", choices: ["이", "은", "는"], hint: "主语" }
           - { sentence: "내가 말했습니다.", translation: "我说了。", focus: "내가", answer: "내가", dictionaryForm: "나+가", choices: ["나가", "저가", "너가"], hint: "特殊变形" }

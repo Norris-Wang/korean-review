@@ -16,6 +16,7 @@ export const VocabSchema = z.object({
     id: z.string(),
     word: z.string(),
     meaning: z.string(),
+    context: z.string().optional(),
     tags: z.array(z.string()),
     accept: z.array(z.string()).optional(),
 });
@@ -24,6 +25,7 @@ export const VocabGroupSchema = z.object({
     id: z.string(),
     name: z.string(),
     kind: z.string(),
+    context: z.string().optional(),
     items: z.array(VocabSchema),
     accept: z.array(z.string()).optional()
 });
@@ -32,6 +34,7 @@ export const GrammarExampleSchema = z.object({
     sentence: z.string(),
     translation: z.string().optional(),
     focus: z.string(),
+    cloze: z.string().optional(),
     answer: z.string(),
     accept: z.array(z.string()).optional(),
     choices: z.array(z.string()).optional(),

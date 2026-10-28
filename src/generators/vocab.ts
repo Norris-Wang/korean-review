@@ -1,12 +1,12 @@
 import type { KnowledgeBase, Vocab } from "../data/schema";
 import type { GeneratedQuestion } from "./types";
-import { shuffle, buildVocabIndex, pickDistractors } from "./utils";
+import { shuffle, buildVocabIndex, pickDistractors, getVocabPrompt } from "./utils";
 
 export function genVocabKr2Zh(v: Vocab, kb: KnowledgeBase): GeneratedQuestion {
     const { groupOf, allVocab } = buildVocabIndex(kb);
     return {
         type: "vocab_mc_kr2zh",
-        prompt: v.word,
+        prompt: getVocabPrompt(v, kb, "kr2zh"),
         choices: shuffle([v.meaning, ...pickDistractors(v, allVocab, groupOf, 3, true)]),
         answer: v.meaning,
         explanation: `${v.word} = ${v.meaning}`,
@@ -17,14 +17,14 @@ export function genVocabZh2Kr(v: Vocab, kb: KnowledgeBase): GeneratedQuestion {
     const { groupOf, allVocab } = buildVocabIndex(kb);
     return {
         type: "vocab_mc_zh2kr",
-        prompt: v.meaning,
+        prompt: getVocabPrompt(v, kb, "zh2kr"),
         choices: shuffle([v.word, ...pickDistractors(v, allVocab, groupOf, 3, false)]),
         answer: v.word,
         explanation: `${v.meaning} = ${v.word}`,
     };
 }
 
-export function genVocabFill(v: Vocab): GeneratedQuestion {
+export function genVocabFill(v: Vocab, kb: KnowledgeBase): GeneratedQuestion {
     const acceptList = new Set<string>([v.word]);
     if (v.word.includes("/")) {
         v.word.split("/").forEach(part => acceptList.add(part.trim()));
@@ -35,7 +35,7 @@ export function genVocabFill(v: Vocab): GeneratedQuestion {
 
     return {
         type: "vocab_fill",
-        prompt: `请写出韩语：${v.meaning}`,
+        prompt: `${getVocabPrompt(v, kb, "zh2kr")}`,
         answer: v.word,
         accept: Array.from(acceptList),
         explanation: `${v.meaning} = ${v.word}`,

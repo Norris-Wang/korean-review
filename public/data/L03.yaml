@@ -87,7 +87,12 @@ lessons:
         name: 가족
         kind: noun
         items:
-          - { id: V-L03-FAM-01, word: (친)할아버지, meaning: 爷爷, tags: [가족] }
+          - {
+              id: V-L03-FAM-01,
+              word: (친)할아버지,
+              meaning: 爷爷,
+              tags: [가족],
+            }
           - { id: V-L03-FAM-02, word: (친)할머니, meaning: 奶奶, tags: [가족] }
           - { id: V-L03-FAM-03, word: 외할아버지, meaning: 外公, tags: [가족] }
           - { id: V-L03-FAM-04, word: 외할머니, meaning: 外婆, tags: [가족] }
@@ -111,14 +116,35 @@ lessons:
         name: 존대어
         kind: verb
         items:
-          - { id: V-L03-HON-01, word: 계시다, meaning: 在（있다的敬语）, tags: [존대어] }
-          - { id: V-L03-HON-02, word: 주무시다, meaning: 睡（자다的敬语）, tags: [존대어] }
-          - { id: V-L03-HON-03, word: 잡수시다/드시다, meaning: 吃（먹다的敬语）, tags: [존대어] }
-          - { id: V-L03-HON-04, word: 말씀하시다, meaning: 说（말하다的敬语）, tags: [존대어] }
+          - {
+              id: V-L03-HON-01,
+              word: 계시다,
+              meaning: 在（있다的敬语）,
+              tags: [존대어],
+            }
+          - {
+              id: V-L03-HON-02,
+              word: 주무시다,
+              meaning: 睡（자다的敬语）,
+              tags: [존대어],
+            }
+          - {
+              id: V-L03-HON-03,
+              word: 잡수시다/드시다,
+              meaning: 吃（먹다的敬语）,
+              tags: [존대어],
+            }
+          - {
+              id: V-L03-HON-04,
+              word: 말씀하시다,
+              meaning: 说（말하다的敬语）,
+              tags: [존대어],
+            }
 
       - id: VG-L03-NUM
         name: 수 1 (하다-열)
         kind: noun
+        context: 固有数词
         items:
           - { id: V-L03-NUM-01, word: 하나, meaning: 一, tags: [수] }
           - { id: V-L03-NUM-02, word: 둘, meaning: 二, tags: [수] }
@@ -146,14 +172,24 @@ lessons:
           - { id: V-L03-ADJ2-09, word: 시원하다, meaning: 凉爽, tags: [형용사] }
           - { id: V-L03-ADJ2-10, word: 따뜻하다, meaning: 暖和, tags: [형용사] }
           - { id: V-L03-ADJ2-11, word: 예쁘다, meaning: 漂亮, tags: [형용사] }
-          - { id: V-L03-ADJ2-12, word: 복잡하다, meaning: 复杂/乱, tags: [형용사] }
+          - {
+              id: V-L03-ADJ2-12,
+              word: 복잡하다,
+              meaning: 复杂/乱,
+              tags: [형용사],
+            }
 
       - id: VG-L03-MAJ
         name: 전공
         kind: noun
         items:
           - { id: V-L03-MAJ-01, word: 역사학, meaning: 历史学, tags: [전공] }
-          - { id: V-L03-MAJ-02, word: 컴퓨터공학, meaning: 计算机工程, tags: [전공] }
+          - {
+              id: V-L03-MAJ-02,
+              word: 컴퓨터공학,
+              meaning: 计算机工程,
+              tags: [전공],
+            }
           - { id: V-L03-MAJ-03, word: 정치학, meaning: 政治学, tags: [전공] }
           - { id: V-L03-MAJ-04, word: 법학, meaning: 法学, tags: [전공] }
           - { id: V-L03-MAJ-05, word: 의학, meaning: 医学, tags: [전공] }
@@ -172,11 +208,51 @@ lessons:
         name: -(으) 시-
         function: 尊称词尾，用于谓词词干后，表示对主语的尊敬。常与敬语主格助词 께서 一起使用。
         examples:
-          - { sentence: "어머니께서 가십니다.", translation: "母亲去。", focus: "가십니다", answer: "가십니다", dictionaryForm: "가다", choices: ["갑니다", "가십니까", "가셨습니다"], hint: "-(으) 시-" }
-          - { sentence: "김 선생님께서 가르치십니다.", translation: "金老师教课。", focus: "가르치십니다", answer: "가르치십니다", dictionaryForm: "가르치다", choices: ["가르칩니다", "가르치십니까", "가르치셨습니다"], hint: "-(으) 시-" }
-          - { sentence: "아버지께서는 신문을 읽었습니다.", translation: "父亲读了报纸。", focus: "읽었습니다", answer: "읽었습니다", dictionaryForm: "읽다", choices: ["읽습니다", "읽으십니다", "읽었습니까"], hint: "-(으) 시-" }
-          - { sentence: "무슨 영화를 보셨습니까?", translation: "看了什么电影？", focus: "보셨습니까", answer: "보셨습니까", dictionaryForm: "보다", choices: ["봅니다", "보십니까", "보았습니다"], hint: "-(으) 시-" }
-          - { sentence: "내일 회사에 가시겠습니까?", translation: "明天去公司吗？", focus: "가시겠습니까", answer: "가시겠습니까", dictionaryForm: "가다", choices: ["갑니다", "가십니다", "갔습니다"], hint: "-(으) 시-" }
+          - {
+              sentence: "어머니께서 가십니다.",
+              translation: "母亲去。",
+              focus: "가십니다",
+              answer: "가십니다",
+              dictionaryForm: "가다",
+              choices: ["갑니다", "가십니까", "가셨습니다"],
+              hint: "-(으) 시-",
+            }
+          - {
+              sentence: "김 선생님께서 가르치십니다.",
+              translation: "金老师教课。",
+              focus: "가르치십니다",
+              answer: "가르치십니다",
+              dictionaryForm: "가르치다",
+              choices: ["가르칩니다", "가르치십니까", "가르치셨습니다"],
+              hint: "-(으) 시-",
+            }
+          - {
+              sentence: "아버지께서는 신문을 읽었습니다.",
+              translation: "父亲读了报纸。",
+              focus: "읽었습니다",
+              answer: "읽었습니다",
+              dictionaryForm: "읽다",
+              choices: ["읽습니다", "읽으십니다", "읽었습니까"],
+              hint: "-(으) 시-",
+            }
+          - {
+              sentence: "무슨 영화를 보셨습니까?",
+              translation: "看了什么电影？",
+              focus: "보셨습니까",
+              answer: "보셨습니까",
+              dictionaryForm: "보다",
+              choices: ["봅니다", "보십니까", "보았습니다"],
+              hint: "-(으) 시-",
+            }
+          - {
+              sentence: "내일 회사에 가시겠습니까?",
+              translation: "明天去公司吗？",
+              focus: "가시겠습니까",
+              answer: "가시겠습니까",
+              dictionaryForm: "가다",
+              choices: ["갑니다", "가십니다", "갔습니다"],
+              hint: "-(으) 시-",
+            }
 
       - id: G-L03-03
         name: 수 1

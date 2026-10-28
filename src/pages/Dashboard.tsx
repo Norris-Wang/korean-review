@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { db, type AnswerLog } from "../db/db";
 import type { KnowledgeBase } from "../data/schema";
 import type { ReviewUnit } from "../review/units";
+import { calculateProgress } from "../review/progress";
 
 type Mode = "due" | "vocab" | "grammar" | "topic" | "mix";
 
@@ -12,21 +13,20 @@ interface Props {
     newUnitCount: number;
     onStart: (m: Mode) => void;
     onWrongBook: () => void;
+    onPractice: () => void;
     onReset: () => void;
 }
 
-export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onStart, onWrongBook, onReset }: Props) {
+export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onStart, onWrongBook, onPractice, onReset }: Props) {
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [logs, setLogs] = useState<AnswerLog[]>([]);
-    const allUnits = Object.values(units);
     const [daysToShow, setDaysToShow] = useState(7);
 
     useEffect(() => {
         const handleResize = () => {
-            // 屏幕宽度小于 600px 时，只显示 4 天，防止拥挤
             setDaysToShow(window.innerWidth < 600 ? 4 : 7);
         };
-        handleResize(); // 初始化
+        handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -35,16 +35,37 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
         db.logs.toArray().then(setLogs);
     }, []);
 
-    // 统计数据
     const totalLogs = logs.length;
     const correctLogs = logs.filter(l => l.correct).length;
     const accuracy = totalLogs > 0 ? Math.round((correctLogs / totalLogs) * 100) : 0;
 
-    const wrongLogs = logs.filter(l => !l.correct);
-    const wrongUnitKeys = Array.from(new Set(wrongLogs.map(l => l.unitKey)));
-    const wrongCount = wrongUnitKeys.length;
 
-    // 近期答题量动态计算
+    const lastLogByUnit = new Map<string, AnswerLog>();
+
+    for (const log of logs) {
+        const previous = lastLogByUnit.get(log.unitKey);
+
+        if (
+            !previous ||
+            log.at > previous.at ||
+            (
+                log.at === previous.at &&
+                (log.id ?? 0) > (previous.id ?? 0)
+            )
+        ) {
+            lastLogByUnit.set(log.unitKey, log);
+        }
+    }
+
+    const wrongCount = Array.from(
+        lastLogByUnit.entries()
+    ).filter(([unitKey, log]) => {
+        return (
+            !log.correct &&
+            units[unitKey] !== undefined
+        );
+    }).length;
+
     const recentDays = Array.from({ length: daysToShow }).map((_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (daysToShow - 1 - i));
@@ -59,30 +80,27 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
     });
     const maxDayCount = Math.max(1, ...recentDays.map(d => d.count));
 
-    // 计算全库总数据
     const totalVocab = kb.lessons.reduce((sum, l) => sum + l.vocabGroups.reduce((n, g) => n + g.items.length, 0), 0);
     const totalGrammar = kb.lessons.reduce((sum, l) => sum + l.grammars.length, 0);
     const totalTopic = kb.lessons.reduce((sum, l) => sum + l.topics.length, 0);
 
-    // 课程进度
-    const courseStats = kb.lessons.map(lesson => {
-        const lessonUnits = allUnits.filter(u => u.lessonId === lesson.id);
-        const mastered = lessonUnits.filter(u => u.stage >= 3).length;
-        const total = lessonUnits.length;
-        const vocab = lesson.vocabGroups.reduce((n, g) => n + g.items.length, 0);
-        return {
-            id: lesson.id,
-            title: lesson.title,
-            mastered,
-            total,
-            percent: total ? Math.round(mastered / total * 100) : 0,
-            vocab: vocab,
-            grammar: lesson.grammars.length,
-            topic: lesson.topics.length
-        };
-    });
+    const courseStats = calculateProgress(kb, units);
 
-    // 生成平滑折线图 SVG 路径
+    const totalKnowledge = courseStats.reduce(
+        (sum, lesson) => sum + lesson.total,
+        0
+    );
+
+    const masteredKnowledge = courseStats.reduce(
+        (sum, lesson) => sum + lesson.mastered,
+        0
+    );
+
+    const unavailableKnowledge = courseStats.reduce(
+        (sum, lesson) => sum + lesson.unavailable,
+        0
+    );
+
     const generateSmoothPath = (points: { x: number; y: number }[]) => {
         if (points.length === 0) return "";
         if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
@@ -94,7 +112,6 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
             const p2 = points[i + 1];
             const p3 = points[i + 2] || p2;
 
-            // 控制点计算
             const cp1x = p1.x + (p2.x - p0.x) / 6;
             const cp1y = p1.y + (p2.y - p0.y) / 6;
             const cp2x = p2.x - (p3.x - p1.x) / 6;
@@ -105,11 +122,8 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
         return d;
     };
 
-    // 计算 SVG 绘图坐标 (宽 100，高 100)
     const chartPoints = recentDays.map((d, i) => {
-        // x 轴均分
         const x = daysToShow > 1 ? (i / (daysToShow - 1)) * 100 : 50;
-        // y 轴：顶部留 15 的边距，底部留 15 的边距，中间 70 是高度
         const y = 100 - (d.count / maxDayCount) * 70 - 15;
         return { x, y, count: d.count, label: d.label };
     });
@@ -118,11 +132,19 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
         <div className="app">
             <header>
                 <div>
-                    <h1>韩语复习面板</h1>
-                    <p className="subtitle">已收录 {kb.lessons.length} 课，共 {allUnits.length} 个知识点</p>
+                    <h1>Yes Han!</h1>
+                    <p className="subtitle">
+                        已收录 {kb.lessons.length} 课，
+                        共 {totalKnowledge} 个知识点，
+                        已掌握 {masteredKnowledge} 个
+                        {unavailableKnowledge > 0 && (
+                            <>
+                                ，待补充 {unavailableKnowledge} 个
+                            </>
+                        )}
+                    </p>
                 </div>
 
-                {/* 替换原来的重置按钮 */}
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     {!showResetConfirm ? (
                         <button
@@ -182,6 +204,13 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
                             <button className="btn secondary" style={{ margin: 0 }} onClick={() => onStart("topic")}>对话排序</button>
                             <button className="btn secondary" style={{ margin: 0 }} onClick={() => onStart("mix")}>混合练习</button>
                         </div>
+                        <button
+                            className="btn secondary"
+                            style={{ marginTop: 12, marginBottom: 0 }}
+                            onClick={onPractice}
+                        >
+                            定点练习
+                        </button>
                     </div>
 
                     {/* 2. 学习数据与近七天（左右并排） */}
@@ -308,31 +337,86 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
                         </div>
 
                         {/* 每一课的具体信息 */}
-                        <div style={{ maxHeight: "150px", overflowY: "auto", paddingRight: 4 }}>
+                        <div style={{ maxHeight: "200px", overflowY: "auto", paddingRight: 4 }}>
+
                             {courseStats.map(c => (
-                                <div key={c.id} style={{ marginBottom: 16 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 4 }}>
-                                        <span style={{ fontWeight: 600 }}>{c.title}</span>
-                                        <span className="text-muted">{c.percent}%</span>
+                                <div
+                                    key={c.lessonId}
+                                    style={{ marginBottom: 18 }}
+                                >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            fontSize: 14,
+                                            marginBottom: 6
+                                        }}
+                                    >
+                                        <span style={{ fontWeight: 600 }}>
+                                            {c.title}
+                                        </span>
+
+                                        <span className="text-muted">
+                                            {c.mastered}/{c.total} · {c.percent}%
+                                        </span>
                                     </div>
 
-                                    {/* 每课数据标签 */}
-                                    <div className="text-muted" style={{ fontSize: 12, marginBottom: 6, display: "flex", gap: 10 }}>
-                                        <span>词汇 {c.vocab}</span>
-                                        <span>·</span>
-                                        <span>语法 {c.grammar}</span>
-                                        <span>·</span>
-                                        <span>对话 {c.topic}</span>
+                                    <div
+                                        className="text-muted"
+                                        style={{
+                                            fontSize: 12,
+                                            marginBottom: 8,
+                                            display: "flex",
+                                            flexWrap: "wrap",
+                                            gap: 10
+                                        }}
+                                    >
+                                        <span>
+                                            词汇 {c.vocab.mastered}/{c.vocab.total}
+                                        </span>
+
+                                        <span>
+                                            语法 {c.grammar.mastered}/{c.grammar.total}
+                                        </span>
+
+                                        <span>
+                                            对话 {c.topic.mastered}/{c.topic.total}
+                                        </span>
                                     </div>
 
-                                    <div style={{ height: 6, background: "#e5e5ea", borderRadius: 3, overflow: "hidden" }}>
-                                        <div style={{
-                                            width: `${c.percent}%`,
-                                            height: "100%",
-                                            background: c.percent === 100 ? "#34c759" : "#007aff",
-                                            transition: "width 0.3s"
-                                        }} />
+                                    <div
+                                        style={{
+                                            height: 7,
+                                            background: "#e5e5ea",
+                                            borderRadius: 4,
+                                            overflow: "hidden"
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                width: `${c.percent}%`,
+                                                height: "100%",
+                                                background:
+                                                    c.percent === 100
+                                                        ? "#34c759"
+                                                        : "#007aff",
+                                                transition: "width 0.3s"
+                                            }}
+                                        />
                                     </div>
+
+                                    {c.unavailable > 0 && (
+                                        <p
+                                            className="text-muted"
+                                            style={{
+                                                fontSize: 12,
+                                                marginTop: 6
+                                            }}
+                                        >
+                                            ⚠️ {c.unavailable} 个知识点暂不可练习，
+                                            需要检查例句或复习单元
+                                        </p>
+                                    )}
                                 </div>
                             ))}
                         </div>

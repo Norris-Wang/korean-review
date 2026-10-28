@@ -5,10 +5,16 @@ import { type ReviewUnit } from "./review/units";
 import { db } from "./db/db";
 import Dashboard from "./pages/Dashboard";
 import WrongBook from "./pages/WrongBook";
-import { MCQuestion, FillQuestion, OrderQuestion } from "./components/QuizCards";
+import PracticeLab from "./pages/PracticeLab";
+import QuestionRenderer from "./components/QuestionRenderer";
 import { useReviewSession, DAILY_LIMIT } from "./hooks/useReviewSession";
 
-type View = "home" | "quiz" | "summary" | "wrongbook" | "stats";
+type View =
+    | "home"
+    | "quiz"
+    | "summary"
+    | "wrongbook"
+    | "practice";
 
 export default function App() {
     const [kb, setKb] = useState<KnowledgeBase | null>(null);
@@ -86,11 +92,19 @@ export default function App() {
         return (
             <Dashboard
                 kb={kb} units={units} dueReviewCount={dueCount} newUnitCount={actualNewUnitCount}
-                onStart={(m) => {
-                    session.startSession(m, allUnits, isAnswerable);
-                    if (m !== "due" || dueCount > 0 || 15 > 0) setView("quiz");
+                onStart={(mode) => {
+                    const started = session.startSession(
+                        mode,
+                        allUnits,
+                        isAnswerable
+                    );
+
+                    if (started) {
+                        setView("quiz");
+                    }
                 }}
                 onWrongBook={() => setView("wrongbook")}
+                onPractice={() => setView("practice")}
                 onReset={async () => {
                     await db.units.clear(); await db.logs.clear();
                     localStorage.clear();
@@ -103,6 +117,15 @@ export default function App() {
 
     if (view === "wrongbook") {
         return <WrongBook kb={kb} onBack={() => setView("home")} />;
+    }
+
+    if (view === "practice") {
+        return (
+            <PracticeLab
+                kb={kb}
+                onBack={() => setView("home")}
+            />
+        );
     }
 
     if (view === "quiz") {
@@ -126,21 +149,38 @@ export default function App() {
                     <button className="btn secondary" style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }} onClick={() => { session.endSession(); setView("home"); }}>结束</button>
                 </header>
                 <div className="card">
-                    {q.type === "topic_order" ? (
-                        <OrderQuestion key={session.current.key} q={q} answered={session.answered} onAnswer={session.handleAnswer} />
-                    ) : q.choices ? (
-                        <MCQuestion key={session.current.key} q={q} answered={session.answered} onAnswer={session.handleAnswer} />
-                    ) : (
-                        <FillQuestion key={session.current.key} q={q} answered={session.answered} onAnswer={session.handleAnswer} />
-                    )}
+                    <QuestionRenderer
+                        question={q}
+                        questionKey={session.current.key}
+                        answered={session.answered}
+                        onAnswer={session.handleAnswer}
+                    />
                 </div>
+                {session.saving && (
+                    <div className="card">
+                        <p role="status">
+                            正在保存答题结果…
+                        </p>
+                    </div>
+                )}
+
+                {session.saveError && (
+                    <div className="card">
+                        <p
+                            role="alert"
+                            style={{ color: "#d93025" }}
+                        >
+                            {session.saveError}
+                        </p>
+                    </div>
+                )}
                 {session.answered && (
                     <div className="card">
                         {session.current.lastCorrect === false ? (
                             <>
                                 <div className="feedback bad">❌ 答错了</div>
                                 <p style={{ fontSize: 14, color: "#86868b", whiteSpace: "pre-wrap", marginTop: 12 }}>{q.explanation}</p>
-                                <button className="btn" style={{ marginTop: 14 }} onClick={session.nextQuestion}>下一题 →</button>
+                                <button className="btn" style={{ marginTop: 14 }} onClick={session.nextQuestion} disabled={session.saving}>下一题 →</button>
                             </>
                         ) : (
                             <div className="feedback ok">✅ 正确，即将进入下一题…</div>

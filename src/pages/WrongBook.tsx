@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../db/db";
+import { saveAnswer } from "../db/answerService";
 import type { ReviewUnit } from "../review/units";
 import type { KnowledgeBase } from "../data/schema";
 import type { GeneratedQuestion } from "../generators/types";
 import { generateFor } from "../generators";
-import { MCQuestion, FillQuestion } from "../components/QuizCards";
+import QuestionRenderer from "../components/QuestionRenderer";
 
 interface WrongItem {
     unitKey: string;
@@ -20,37 +21,109 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
     const [reviewing, setReviewing] = useState<{ key: string; q: GeneratedQuestion } | null>(null);
     const [feedback, setFeedback] = useState<{ correct: boolean; answer: string } | null>(null);
 
+    const submittingRef = useRef(false);
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState("");
+
     useEffect(() => { load(); }, []);
+
 
     async function load() {
         setLoading(true);
-        const logs = await db.logs.filter(l => l.correct === false).toArray();
-        const units = await db.units.toArray();
-        const unitMap = new Map(units.map(u => [u.key, u]));
 
-        const agg = new Map<string, WrongItem>();
-        for (const log of logs) {
-            const existing = agg.get(log.unitKey);
-            if (existing) {
-                existing.wrongCount++;
-                if (log.at > existing.lastAt) {
-                    existing.lastAt = log.at;
-                    existing.lastType = log.type;
+        try {
+            const [logs, units] = await Promise.all([
+                db.logs.toArray(),
+                db.units.toArray()
+            ]);
+
+            const unitMap = new Map(
+                units.map(u => [u.key, u])
+            );
+
+            // 记录每个复习单元的最后一次答题
+            // 同时保留历史错误次数
+            const history = new Map<
+                string,
+                {
+                    wrongCount: number;
+                    lastWrongAt: number;
+                    lastType: string;
+                    lastLogId: number;
+                    lastCorrect: boolean;
+                    lastAt: number;
                 }
-            } else {
-                agg.set(log.unitKey, {
-                    unitKey: log.unitKey,
-                    unit: unitMap.get(log.unitKey) ?? null,
-                    wrongCount: 1,
-                    lastAt: log.at,
-                    lastType: log.type,
+            >();
+
+            for (const log of logs) {
+                const existing = history.get(log.unitKey);
+
+                if (!existing) {
+                    history.set(log.unitKey, {
+                        wrongCount: log.correct ? 0 : 1,
+                        lastWrongAt: log.correct ? 0 : log.at,
+                        lastType: log.type,
+                        lastLogId: log.id ?? 0,
+                        lastCorrect: log.correct,
+                        lastAt: log.at,
+                    });
+                    continue;
+                }
+
+                if (!log.correct) {
+                    existing.wrongCount++;
+                    existing.lastWrongAt = Math.max(
+                        existing.lastWrongAt,
+                        log.at
+                    );
+                }
+
+                // at 相同时，使用自增日志 ID 判断先后
+                const id = log.id ?? 0;
+
+                if (
+                    log.at > existing.lastAt ||
+                    (
+                        log.at === existing.lastAt &&
+                        id > existing.lastLogId
+                    )
+                ) {
+                    existing.lastCorrect = log.correct;
+                    existing.lastType = log.type;
+                    existing.lastLogId = id;
+                    existing.lastAt = log.at;
+                }
+            }
+
+            const list: WrongItem[] = [];
+
+            for (const [unitKey, record] of history) {
+                // 没有错误，或者最后一次已经答对
+                if (
+                    record.wrongCount === 0 ||
+                    record.lastCorrect
+                ) {
+                    continue;
+                }
+
+                list.push({
+                    unitKey,
+                    unit: unitMap.get(unitKey) ?? null,
+                    wrongCount: record.wrongCount,
+                    lastAt: record.lastWrongAt,
+                    lastType: record.lastType
                 });
             }
-        }
 
-        const list = [...agg.values()].sort((a, b) => b.lastAt - a.lastAt);
-        setItems(list);
-        setLoading(false);
+            list.sort((a, b) => b.lastAt - a.lastAt);
+
+            setItems(list);
+        } catch (error) {
+            console.error("错题本加载失败：", error);
+            setSaveError("错题本加载失败，请重新进入页面。");
+        } finally {
+            setLoading(false);
+        }
     }
 
     function describe(item: WrongItem): string {
@@ -83,6 +156,11 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
     }
 
     function startReview(item: WrongItem) {
+        if (submittingRef.current) return;
+
+        submittingRef.current = false;
+        setSaveError("");
+
         if (!item.unit) return;
         const q = generateFor(kb, item.unit);
         if (!q) return;
@@ -90,21 +168,44 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
         setFeedback(null);
     }
 
+
     async function handleAnswer(correct: boolean) {
-        if (!reviewing) return;
-        const { key, q } = reviewing;
-        const unit = await db.units.get(key);
-        if (unit) {
-            const { schedule } = await import("../review/scheduler");
-            const updated = { ...unit };
-            schedule(updated, correct);
-            await db.units.put(updated);
+        if (!reviewing || feedback || submittingRef.current) {
+            return;
         }
-        await db.logs.add({ unitKey: key, correct, at: Date.now(), type: q.type });
-        setFeedback({ correct, answer: q.answer });
-        if (correct) {
-            // 答对后从错题本移除当前项
-            setItems(prev => prev.filter(x => x.unitKey !== key));
+
+        // 同步锁，立即阻止重复提交
+        submittingRef.current = true;
+        setSaving(true);
+        setSaveError("");
+
+        const { key, q } = reviewing;
+
+        try {
+            await saveAnswer(key, correct, q.type);
+
+            // 只有数据库保存成功才显示答题结果
+            setFeedback({
+                correct,
+                answer: q.answer
+            });
+
+            if (correct) {
+                setItems(prev =>
+                    prev.filter(item => item.unitKey !== key)
+                );
+            }
+        } catch (error) {
+            console.error("保存错题结果失败：", error);
+
+            setSaveError(
+                "保存失败，请检查浏览器存储后重试。"
+            );
+
+            // 保存失败，允许重新提交
+            submittingRef.current = false;
+        } finally {
+            setSaving(false);
         }
     }
 
@@ -117,16 +218,36 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
                 <header>
                     <h1>错题重做</h1>
                     <button className="btn secondary" style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }}
-                        onClick={() => { setReviewing(null); setFeedback(null); }}>
+                        disabled={saving}
+                        onClick={async () => {
+                            submittingRef.current = false;
+                            setReviewing(null);
+                            setFeedback(null);
+                            setSaveError("");
+                            await load();
+                        }}>
                         返回
                     </button>
+
+                    {saving && (
+                        <p role="status">
+                            正在保存答题结果…
+                        </p>
+                    )}
+
+                    {saveError && (
+                        <p role="alert" style={{ color: "#d93025" }}>
+                            {saveError}
+                        </p>
+                    )}
                 </header>
                 <div className="card">
-                    {q.choices ? (
-                        <MCQuestion q={q} answered={!!feedback} onAnswer={handleAnswer} />
-                    ) : (
-                        <FillQuestion q={q} answered={!!feedback} onAnswer={handleAnswer} />
-                    )}
+                    <QuestionRenderer
+                        question={q}
+                        questionKey={reviewing.key}
+                        answered={!!feedback}
+                        onAnswer={handleAnswer}
+                    />
                 </div>
                 {feedback && (
                     <div className="card">

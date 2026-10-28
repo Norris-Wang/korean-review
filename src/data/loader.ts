@@ -2,6 +2,7 @@ import { parse } from "yaml";
 import { KnowledgeBaseSchema, type KnowledgeBase } from "./schema";
 import { db } from "../db/db";
 import { buildUnitsForLesson, type ReviewUnit } from "../review/units";
+import { assertVocabularyDisambiguation } from "./vocabValidation";
 
 export async function loadKnowledgeBase(): Promise<KnowledgeBase> {
     const files: string[] = await fetch(`./data/index.json?t=${Date.now()}`).then(r => r.json());
@@ -13,7 +14,14 @@ export async function loadKnowledgeBase(): Promise<KnowledgeBase> {
         allLessons.push(...parsed.lessons);
     }
 
-    return { version: "1.0", lessons: allLessons };
+    const kb: KnowledgeBase = {
+        version: "1.0",
+        lessons: allLessons
+    };
+
+    assertVocabularyDisambiguation(kb);
+
+    return kb;
 }
 
 export async function syncUnitsToDB(kb: KnowledgeBase): Promise<Record<string, ReviewUnit>> {

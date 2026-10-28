@@ -140,7 +140,13 @@ lessons:
           - { id: V-L04-TASTE-02, word: 맛없다, meaning: 难吃, tags: [맛] }
           - { id: V-L04-TASTE-03, word: 맵다, meaning: 辣, tags: [맛] }
           - { id: V-L04-TASTE-04, word: 달다, meaning: 甜, tags: [맛] }
-          - { id: V-L04-TASTE-05, word: 쓰다, meaning: 苦, tags: [맛] }
+          - {
+              id: V-L04-TASTE-05,
+              word: 쓰다,
+              meaning: 苦,
+              context: 味道,
+              tags: [맛],
+            }
           - { id: V-L04-TASTE-06, word: 시다, meaning: 酸, tags: [맛] }
           - { id: V-L04-TASTE-07, word: 짜다, meaning: 咸, tags: [맛] }
           - { id: V-L04-TASTE-08, word: 싱겁다, meaning: 淡, tags: [맛] }
@@ -152,9 +158,24 @@ lessons:
           - { id: V-L04-FOOD2-01, word: 비빔밥, meaning: 拌饭, tags: [음식] }
           - { id: V-L04-FOOD2-02, word: 갈비, meaning: 排骨, tags: [음식] }
           - { id: V-L04-FOOD2-03, word: 삼겹살, meaning: 五花肉, tags: [음식] }
-          - { id: V-L04-FOOD2-04, word: 김치찌개, meaning: 泡菜汤, tags: [음식] }
-          - { id: V-L04-FOOD2-05, word: 된장찌개, meaning: 大酱汤, tags: [음식] }
-          - { id: V-L04-FOOD2-06, word: 순두부찌개, meaning: 嫩豆腐汤, tags: [음식] }
+          - {
+              id: V-L04-FOOD2-04,
+              word: 김치찌개,
+              meaning: 泡菜汤,
+              tags: [음식],
+            }
+          - {
+              id: V-L04-FOOD2-05,
+              word: 된장찌개,
+              meaning: 大酱汤,
+              tags: [음식],
+            }
+          - {
+              id: V-L04-FOOD2-06,
+              word: 순두부찌개,
+              meaning: 嫩豆腐汤,
+              tags: [음식],
+            }
           - { id: V-L04-FOOD2-07, word: 닭갈비, meaning: 鸡排, tags: [음식] }
           - { id: V-L04-FOOD2-08, word: 삼계탕, meaning: 参鸡汤, tags: [음식] }
           - { id: V-L04-FOOD2-09, word: 갈비탕, meaning: 排骨汤, tags: [음식] }
@@ -167,6 +188,7 @@ lessons:
       - id: VG-L04-NUM2
         name: 수 2 (일-십)
         kind: noun
+        context: 汉字数词
         items:
           - { id: V-L04-NUM2-01, word: 일, meaning: 一, tags: [수] }
           - { id: V-L04-NUM2-02, word: 이, meaning: 二, tags: [수] }
@@ -194,29 +216,125 @@ lessons:
         name: 에 가다/오다
         function: 表示主体存在处所的助词 에 与趋向动词 가다/오다 连用，表示动词的目的地
         examples:
-          - { sentence: "날마다 학교에 갑니다.", translation: "每天去学校。", focus: "에", answer: "에", choices: ["에서", "를", "가"] }
-          - { sentence: "친구가 우리집에 옵니다.", translation: "朋友来我家。", focus: "에", answer: "에", choices: ["에서", "를", "가"] }
-          - { sentence: "할아버지께서 병원에 가십니다.", translation: "爷爷去医院。", focus: "에", answer: "에", choices: ["에서", "를", "가"] }
-          - { sentence: "선생님께서 교실에 들어가십니다.", translation: "老师进教室。", focus: "에", answer: "에", choices: ["에서", "를", "가"] }
+          - {
+              sentence: "날마다 학교에 갑니다.",
+              translation: "每天去学校。",
+              focus: "에",
+              answer: "에",
+              choices: ["에서", "를", "가"],
+            }
+          - {
+              sentence: "친구가 우리집에 옵니다.",
+              translation: "朋友来我家。",
+              focus: "에",
+              answer: "에",
+              choices: ["에서", "를", "가"],
+            }
+          - {
+              sentence: "할아버지께서 병원에 가십니다.",
+              translation: "爷爷去医院。",
+              focus: "에",
+              answer: "에",
+              choices: ["에서", "를", "가"],
+            }
+          - {
+              sentence: "선생님께서 교실에 들어가십니다.",
+              translation: "老师进教室。",
+              focus: "에",
+              answer: "에",
+              choices: ["에서", "를", "가"],
+            }
 
       - id: G-L04-02
         name: -ㄹ까요/을까요?
         function: 用于谓词词干后面的疑问式终结词尾，表示提议或询问意见。终结词尾，和动词词干连用，表示询问对方的意见或想法。
         examples:
-          - { sentence: "점심을 같이 먹을까요?", translation: "一起吃午饭好吗？", focus: "먹을까요", answer: "먹을까요", dictionaryForm: "먹다", choices: ["먹습니다", "먹으십시오", "먹겠습니다"], hint: "提议/询问" }
-          - { sentence: "도서관에 갈까요?", translation: "去图书馆好吗？", focus: "갈까요", answer: "갈까요", dictionaryForm: "가다", choices: ["갑니다", "가십시오", "가겠습니다"], hint: "提议/询问" }
-          - { sentence: "무슨 영화를 볼까요?", translation: "看什么电影好呢？", focus: "볼까요", answer: "볼까요", dictionaryForm: "보다", choices: ["봅니다", "보십시오", "보겠습니다"], hint: "提议/询问" }
-          - { sentence: "책을 어디에 놓을까요?", translation: "书放在哪里好呢？", focus: "놓을까요", answer: "놓을까요", dictionaryForm: "놓다", choices: ["놓습니다", "놓으십시오", "놓겠습니다"], hint: "询问意见" }
-          - { sentence: "녹차를 드릴까요?", translation: "给您绿茶好吗？", focus: "드릴까요", answer: "드릴까요", dictionaryForm: "드리다", choices: ["드립니다", "드리십시오", "드리겠습니다"], hint: "询问意见" }
+          - {
+              sentence: "점심을 같이 먹을까요?",
+              translation: "一起吃午饭好吗？",
+              focus: "먹을까요",
+              answer: "먹을까요",
+              dictionaryForm: "먹다",
+              choices: ["먹습니다", "먹으십시오", "먹겠습니다"],
+              hint: "提议/询问",
+            }
+          - {
+              sentence: "도서관에 갈까요?",
+              translation: "去图书馆好吗？",
+              focus: "갈까요",
+              answer: "갈까요",
+              dictionaryForm: "가다",
+              choices: ["갑니다", "가십시오", "가겠습니다"],
+              hint: "提议/询问",
+            }
+          - {
+              sentence: "무슨 영화를 볼까요?",
+              translation: "看什么电影好呢？",
+              focus: "볼까요",
+              answer: "볼까요",
+              dictionaryForm: "보다",
+              choices: ["봅니다", "보십시오", "보겠습니다"],
+              hint: "提议/询问",
+            }
+          - {
+              sentence: "책을 어디에 놓을까요?",
+              translation: "书放在哪里好呢？",
+              focus: "놓을까요",
+              answer: "놓을까요",
+              dictionaryForm: "놓다",
+              choices: ["놓습니다", "놓으십시오", "놓겠습니다"],
+              hint: "询问意见",
+            }
+          - {
+              sentence: "녹차를 드릴까요?",
+              translation: "给您绿茶好吗？",
+              focus: "드릴까요",
+              answer: "드릴까요",
+              dictionaryForm: "드리다",
+              choices: ["드립니다", "드리십시오", "드리겠습니다"],
+              hint: "询问意见",
+            }
 
       - id: G-L04-03
         name: -ㅂ시다/읍시다
         function: 用于动词词干后面的终结词尾，表示提议或接受对方请求。
         examples:
-          - { sentence: "한국 음식을 먹읍시다.", translation: "吃韩国料理吧。", focus: "먹읍시다", answer: "먹읍시다", dictionaryForm: "먹다", choices: ["먹습니다", "먹을까요", "먹으십시오"], hint: "共动句" }
-          - { sentence: "여기에 잠깐 앉읍시다.", translation: "在这里坐一会吧。", focus: "앉읍시다", answer: "앉읍시다", dictionaryForm: "앉다", choices: ["앉습니다", "앉을까요", "앉으십시오"], hint: "共动句" }
-          - { sentence: "영화를 봅시다.", translation: "看电影吧。", focus: "봅시다", answer: "봅시다", dictionaryForm: "보다", choices: ["봅니다", "볼까요", "보십시오"], hint: "共动句" }
-          - { sentence: "불고기를 시킵시다.", translation: "点烤肉吧。", focus: "시킵시다", answer: "시킵시다", dictionaryForm: "시키다", choices: ["시킵니다", "시킬까요", "시키십시오"], hint: "共动句" }
+          - {
+              sentence: "한국 음식을 먹읍시다.",
+              translation: "吃韩国料理吧。",
+              focus: "먹읍시다",
+              answer: "먹읍시다",
+              dictionaryForm: "먹다",
+              choices: ["먹습니다", "먹을까요", "먹으십시오"],
+              hint: "共动句",
+            }
+          - {
+              sentence: "여기에 잠깐 앉읍시다.",
+              translation: "在这里坐一会吧。",
+              focus: "앉읍시다",
+              answer: "앉읍시다",
+              dictionaryForm: "앉다",
+              choices: ["앉습니다", "앉을까요", "앉으십시오"],
+              hint: "共动句",
+            }
+          - {
+              sentence: "영화를 봅시다.",
+              translation: "看电影吧。",
+              focus: "봅시다",
+              answer: "봅시다",
+              dictionaryForm: "보다",
+              choices: ["봅니다", "볼까요", "보십시오"],
+              hint: "共动句",
+            }
+          - {
+              sentence: "불고기를 시킵시다.",
+              translation: "点烤肉吧。",
+              focus: "시킵시다",
+              answer: "시킵시다",
+              dictionaryForm: "시키다",
+              choices: ["시킵니다", "시킬까요", "시키십시오"],
+              hint: "共动句",
+            }
 
       - id: G-L04-04
         name: -지 않다
@@ -227,26 +345,130 @@ lessons:
         name: -고 싶다
         function: 用于动词词干后，表示说话人的愿望。第三人称主语用 -고 싶어하다 。
         examples:
-          - { sentence: "고향에 가고 싶습니다.", translation: "想去故乡。", focus: "가고 싶습니다", answer: "가고 싶습니다", dictionaryForm: "가다", choices: ["갑니다", "갈까요", "가십시오"], hint: "愿望" }
-          - { sentence: "친구들을 만나고 싶었습니다.", translation: "想见朋友们（过去）。", focus: "만나고 싶었습니다", answer: "만나고 싶었습니다", dictionaryForm: "만나다", choices: ["만나고 싶습니다", "만날까요", "만나십시오"], hint: "愿望(过去)" }
-          - { sentence: "무슨 음식을 잡수시고 싶습니까?", translation: "想吃什么？（敬语）", focus: "잡수시고 싶습니까", answer: "잡수시고 싶습니까", dictionaryForm: "잡수시다", choices: ["먹고 싶습니다", "잡수십니까", "먹을까요"], hint: "愿望(疑问/敬语)" }
-          - { sentence: "커피를 마시고 싶습니다.", translation: "想喝咖啡。", focus: "마시고 싶습니다", answer: "마시고 싶습니다", dictionaryForm: "마시다", choices: ["마십니다", "마실까요", "마시십시오"], hint: "愿望" }
+          - {
+              sentence: "고향에 가고 싶습니다.",
+              translation: "想去故乡。",
+              focus: "가고 싶습니다",
+              answer: "가고 싶습니다",
+              dictionaryForm: "가다",
+              choices: ["갑니다", "갈까요", "가십시오"],
+              hint: "愿望",
+            }
+          - {
+              sentence: "친구들을 만나고 싶었습니다.",
+              translation: "想见朋友们（过去）。",
+              focus: "만나고 싶었습니다",
+              answer: "만나고 싶었습니다",
+              dictionaryForm: "만나다",
+              choices: ["만나고 싶습니다", "만날까요", "만나십시오"],
+              hint: "愿望(过去)",
+            }
+          - {
+              sentence: "무슨 음식을 잡수시고 싶습니까?",
+              translation: "想吃什么？（敬语）",
+              focus: "잡수시고 싶습니까",
+              answer: "잡수시고 싶습니까",
+              dictionaryForm: "잡수시다",
+              choices: ["먹고 싶습니다", "잡수십니까", "먹을까요"],
+              hint: "愿望(疑问/敬语)",
+            }
+          - {
+              sentence: "커피를 마시고 싶습니다.",
+              translation: "想喝咖啡。",
+              focus: "마시고 싶습니다",
+              answer: "마시고 싶습니다",
+              dictionaryForm: "마시다",
+              choices: ["마십니다", "마실까요", "마시십시오"],
+              hint: "愿望",
+            }
 
       - id: G-L04-06
         name: -겠-
         function: 和动词词干连用，表示说话人的意志。疑问句中，用来询问听话人的意图。
         examples:
-          - { sentence: "저는 파티에 안 가겠습니다.", translation: "我不去派对。", focus: "가겠습니다", answer: "가겠습니다", dictionaryForm: "가다", choices: ["갑니다", "갈까요", "가십시오"], hint: "意志" }
-          - { sentence: "내년에 한국에 다시 오겠습니다.", translation: "明年会再来韩国。", focus: "오겠습니다", answer: "오겠습니다", dictionaryForm: "오다", choices: ["옵니다", "올까요", "오십시오"], hint: "意志" }
-          - { sentence: "저는 비빔밥을 먹겠습니다.", translation: "我要吃拌饭。", focus: "먹겠습니다", answer: "먹겠습니다", dictionaryForm: "먹다", choices: ["먹습니다", "먹을까요", "먹으십시오"], hint: "意志" }
-          - { sentence: "뭘 잡수시겠습니까?", translation: "您要吃什么？", focus: "잡수시겠습니까", answer: "잡수시겠습니까", dictionaryForm: "잡수시다", choices: ["먹겠습니다", "드십니까", "드실까요"], hint: "询问意图(敬语)" }
+          - {
+              sentence: "저는 파티에 안 가겠습니다.",
+              translation: "我不去派对。",
+              focus: "가겠습니다",
+              answer: "가겠습니다",
+              dictionaryForm: "가다",
+              choices: ["갑니다", "갈까요", "가십시오"],
+              hint: "意志",
+            }
+          - {
+              sentence: "내년에 한국에 다시 오겠습니다.",
+              translation: "明年会再来韩国。",
+              focus: "오겠습니다",
+              answer: "오겠습니다",
+              dictionaryForm: "오다",
+              choices: ["옵니다", "올까요", "오십시오"],
+              hint: "意志",
+            }
+          - {
+              sentence: "저는 비빔밥을 먹겠습니다.",
+              translation: "我要吃拌饭。",
+              focus: "먹겠습니다",
+              answer: "먹겠습니다",
+              dictionaryForm: "먹다",
+              choices: ["먹습니다", "먹을까요", "먹으십시오"],
+              hint: "意志",
+            }
+          - {
+              sentence: "뭘 잡수시겠습니까?",
+              translation: "您要吃什么？",
+              focus: "잡수시겠습니까",
+              answer: "잡수시겠습니까",
+              dictionaryForm: "잡수시다",
+              choices: ["먹겠습니다", "드십니까", "드실까요"],
+              hint: "询问意图(敬语)",
+            }
 
       - id: G-L04-07
         name: -(으) 십시오
         function: 终结词尾，和动词词干连用，表示命令或嘱托。
         examples:
-          - { sentence: "내일 일곱시에 오십시오.", translation: "明天七点请来。", focus: "오십시오", answer: "오십시오", dictionaryForm: "오다", choices: ["옵니다", "오십니까", "오겠습니다"], hint: "命令/嘱托" }
-          - { sentence: "조용히 하십시오.", translation: "请安静。", focus: "하십시오", answer: "하십시오", dictionaryForm: "하다", choices: ["합니다", "하십니까", "하겠습니다"], hint: "命令/嘱托" }
-          - { sentence: "여기 앉으십시오.", translation: "请坐这里。", focus: "앉으십시오", answer: "앉으십시오", dictionaryForm: "앉다", choices: ["앉습니다", "앉습니까", "앉겠습니다"], hint: "命令/嘱托" }
-          - { sentence: "교과서를 읽으십시오.", translation: "请读教科书。", focus: "읽으십시오", answer: "읽으십시오", dictionaryForm: "읽다", choices: ["읽습니다", "읽습니까", "읽겠습니다"], hint: "命令/嘱托" }
-          - { sentence: "담배를 피우지 마십시오.", translation: "请不要吸烟。", focus: "피우지 마십시오", answer: "피우지 마십시오", dictionaryForm: "피우다", choices: ["피웁니다", "피우십시오", "피우겠습니다"], hint: "禁止/嘱托" }
+          - {
+              sentence: "내일 일곱시에 오십시오.",
+              translation: "明天七点请来。",
+              focus: "오십시오",
+              answer: "오십시오",
+              dictionaryForm: "오다",
+              choices: ["옵니다", "오십니까", "오겠습니다"],
+              hint: "命令/嘱托",
+            }
+          - {
+              sentence: "조용히 하십시오.",
+              translation: "请安静。",
+              focus: "하십시오",
+              answer: "하십시오",
+              dictionaryForm: "하다",
+              choices: ["합니다", "하십니까", "하겠습니다"],
+              hint: "命令/嘱托",
+            }
+          - {
+              sentence: "여기 앉으십시오.",
+              translation: "请坐这里。",
+              focus: "앉으십시오",
+              answer: "앉으십시오",
+              dictionaryForm: "앉다",
+              choices: ["앉습니다", "앉습니까", "앉겠습니다"],
+              hint: "命令/嘱托",
+            }
+          - {
+              sentence: "교과서를 읽으십시오.",
+              translation: "请读教科书。",
+              focus: "읽으십시오",
+              answer: "읽으십시오",
+              dictionaryForm: "읽다",
+              choices: ["읽습니다", "읽습니까", "읽겠습니다"],
+              hint: "命令/嘱托",
+            }
+          - {
+              sentence: "담배를 피우지 마십시오.",
+              translation: "请不要吸烟。",
+              focus: "피우지 마십시오",
+              answer: "피우지 마십시오",
+              dictionaryForm: "피우다",
+              choices: ["피웁니다", "피우십시오", "피우겠습니다"],
+              hint: "禁止/嘱托",
+            }
