@@ -1,4 +1,5 @@
 import type { Lesson } from "../data/schema";
+import type { StoredFsrsCard } from "./fsrsScheduler";
 
 export interface ReviewUnit {
     key: string;
@@ -11,6 +12,8 @@ export interface ReviewUnit {
     streak: number;
     lapses: number;
     seen: number;
+    schedulingAlgorithm?: "fixed" | "fsrs";
+    fsrsCard?: StoredFsrsCard;
 }
 
 export function buildUnitsForLesson(lesson: Lesson): ReviewUnit[] {
