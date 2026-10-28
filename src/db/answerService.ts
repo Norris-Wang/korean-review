@@ -1,5 +1,5 @@
 
-import { Rating } from "ts-fsrs";
+import type { Grade } from "ts-fsrs";
 
 import { db, type ReviewDB } from "./db";
 
@@ -26,7 +26,8 @@ export async function saveAnswerToDb(
     unitKey: string,
     correct: boolean,
     questionType: GeneratedQuestion["type"],
-    now = Date.now()
+    now = Date.now(),
+    rating?: Grade
 ): Promise<ReviewUnit> {
     return database.transaction(
         "rw",
@@ -50,7 +51,8 @@ export async function saveAnswerToDb(
             const updated = calculateNextReview(
                 unit,
                 correct,
-                now
+                now,
+                rating
             );
 
             // 两次写入处于同一 IndexedDB 事务
@@ -63,13 +65,8 @@ export async function saveAnswerToDb(
                 type: questionType,
                 algorithm,
 
-                // 目前 FSRS 仅使用自动映射评分
                 ...(algorithm === "fsrs"
-                    ? {
-                        rating: correct
-                            ? Rating.Good
-                            : Rating.Again
-                    }
+                    ? { rating }
                     : {})
             });
 
@@ -87,12 +84,15 @@ export async function saveAnswerToDb(
 export function saveAnswer(
     unitKey: string,
     correct: boolean,
-    questionType: GeneratedQuestion["type"]
+    questionType: GeneratedQuestion["type"],
+    rating?: Grade
 ): Promise<ReviewUnit> {
     return saveAnswerToDb(
         db,
         unitKey,
         correct,
-        questionType
+        questionType,
+        Date.now(),
+        rating
     );
 }

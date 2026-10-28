@@ -4,10 +4,11 @@ import {
     fsrs,
     Rating,
     type Card,
+    State,
     type Grade
 } from "ts-fsrs";
 
-export { Rating };
+export { Rating, State };
 
 /**
  * FSRS 的持久化格式。

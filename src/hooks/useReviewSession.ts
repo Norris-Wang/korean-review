@@ -6,8 +6,15 @@ import { getEligibleUnits, getKnowledgeKey } from "../review/progression";
 import { generateFor } from "../generators";
 import { saveAnswer } from "../db/answerService";
 import type { GeneratedQuestion } from "../generators/types";
+import { Rating, type Grade } from "ts-fsrs";
 
 export type Mode = "due" | "vocab" | "grammar" | "topic" | "mix";
+
+type ReviewSessionDependencies = {
+    saveAnswerFn?: typeof saveAnswer;
+    initialLearnedItems?: string[];
+    persistLearnedItems?: (items: string[]) => void;
+};
 
 export const DAILY_LIMIT = { vocab: 20, grammar: 1, topic: 1 };
 
@@ -21,14 +28,23 @@ function getLearnedItemsToday() {
     try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; }
 }
 
-export function useReviewSession(kb: KnowledgeBase | null, units: Record<string, ReviewUnit>, setUnits: (u: any) => void) {
+export function useReviewSession(
+    kb: KnowledgeBase | null,
+    units: Record<string, ReviewUnit>,
+    setUnits: (u: any) => void,
+    dependencies: ReviewSessionDependencies = {}
+) {
     const [queue, setQueue] = useState<string[]>([]);
     const [index, setIndex] = useState(0);
     const [current, setCurrent] = useState<{ key: string; unit: ReviewUnit; q: GeneratedQuestion; lastCorrect?: boolean } | null>(null);
     const [answered, setAnswered] = useState(false);
     const [correctCount, setCorrectCount] = useState(0);
     const [answeredCount, setAnsweredCount] = useState(0);
-    const [learnedItems, setLearnedItems] = useState<string[]>(getLearnedItemsToday());
+    const [learnedItems, setLearnedItems] =
+        useState<string[]>(() =>
+            dependencies.initialLearnedItems ??
+            getLearnedItemsToday()
+        );
 
     const autoNextRef = useRef<number | null>(null);
     const nextQuestionRef = useRef<() => void>(() => { });
@@ -39,17 +55,26 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState("");
 
+    const [pendingRating, setPendingRating] = useState<string | null>(null);
+
+    const answerJudgedRef = useRef(false);
+
     const loadQuestion = useCallback((key: string): boolean => {
         const unit = units[key];
         if (!unit || !kb) return false;
         const q = generateFor(kb, unit);
         if (!q) return false;
+        answerJudgedRef.current = false;
+        setPendingRating(null);
         setCurrent({ key, unit, q, lastCorrect: undefined });
         setAnswered(false);
         return true;
     }, [units, kb]);
 
     const nextQuestion = useCallback(() => {
+        if (submittingRef.current || pendingRating !== null) {
+            return;
+        }
         if (autoNextRef.current !== null) {
             window.clearTimeout(autoNextRef.current);
             autoNextRef.current = null;
@@ -68,13 +93,16 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
         }
 
         setCurrent(null);
-    }, [index, queue, units, loadQuestion]);
+    }, [index, queue, units, loadQuestion, pendingRating]);
 
     nextQuestionRef.current = nextQuestion;
 
 
-    const handleAnswer = useCallback(
-        async (correct: boolean) => {
+    const commitAnswer = useCallback(
+        async (
+            correct: boolean,
+            rating?: Grade
+        ) => {
             if (
                 !current ||
                 answered ||
@@ -83,38 +111,46 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
                 return;
             }
 
+            const sessionId = sessionIdRef.current;
+            const { key, q } = current;
+            const knowledgeKey = getKnowledgeKey(current.unit);
+
+            const wasKnownBefore = Object.values(units).some(
+                unit =>
+                    getKnowledgeKey(unit) === knowledgeKey &&
+                    unit.seen > 0
+            );
+
             submittingRef.current = true;
             setSaving(true);
             setSaveError("");
 
-            const sessionId = sessionIdRef.current;
-            const { key, q } = current;
-
             try {
-                // 先完成数据库事务
-                const updated = await saveAnswer(
+                // 此时才真正保存答题结果
+                const updated = await (
+                    dependencies.saveAnswerFn ?? saveAnswer
+                )(
                     key,
                     correct,
-                    q.type
+                    q.type,
+                    rating
                 );
 
-                // 即使用户退出了当前会话，
-                // 也需要让内存中的学习状态与数据库保持一致
+                // 保持 React 学习状态与数据库一致
                 setUnits((prev: Record<string, ReviewUnit>) => ({
                     ...prev,
                     [key]: updated
                 }));
 
-                // 旧会话已结束：不再修改答题界面
+                // 会话已切换，不再更新旧会话界面
                 if (sessionId !== sessionIdRef.current) {
                     return;
                 }
 
-                // 记录今天首次接触的知识点
-                const itemKey =
-                    `${updated.itemType}_${updated.itemId}`;
+                // 记录首次接触的知识点
+                const itemKey = getKnowledgeKey(updated);
 
-                if (updated.seen === 1) {
+                if (updated.seen === 1 && !wasKnownBefore) {
                     setLearnedItems(prev => {
                         if (prev.includes(itemKey)) {
                             return prev;
@@ -122,16 +158,21 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
 
                         const next = [...prev, itemKey];
 
-                        localStorage.setItem(
-                            `kr_learned_items_${getTodayStr()}`,
-                            JSON.stringify(next)
-                        );
+                        if (dependencies.persistLearnedItems) {
+                            dependencies.persistLearnedItems(next);
+                        } else {
+                            localStorage.setItem(
+                                `kr_learned_items_${getTodayStr()}`,
+                                JSON.stringify(next)
+                            );
+                        }
 
                         return next;
                     });
                 }
 
-                // 数据库保存成功后才更新统计
+                // 保存成功后才标记完成
+                setPendingRating(null);
                 setAnswered(true);
                 setAnsweredCount(c => c + 1);
 
@@ -140,12 +181,12 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
                 }
 
                 setCurrent(prev =>
-                    prev && prev.key === key
+                    prev?.key === key
                         ? { ...prev, lastCorrect: correct }
                         : prev
                 );
 
-                // 只有答对后自动跳到下一题
+                // 正确答案保存成功后自动跳题
                 if (correct) {
                     if (autoNextRef.current !== null) {
                         window.clearTimeout(
@@ -159,14 +200,22 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
                             nextQuestionRef.current();
                         }, 900);
                 }
+
             } catch (error) {
                 console.error("答题保存失败：", error);
 
                 if (sessionId === sessionIdRef.current) {
                     setSaveError(
-                        "答题结果保存失败，请重试。"
+                        "保存失败，请重试本次提交。"
                     );
+
+                    // 没有等待评分时，允许重新提交答案。
+                    // 等待评分时只允许重新点击评分按钮。
+                    if (pendingRating === null) {
+                        answerJudgedRef.current = false;
+                    }
                 }
+
             } finally {
                 if (sessionId === sessionIdRef.current) {
                     submittingRef.current = false;
@@ -174,12 +223,84 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
                 }
             }
         },
-        [current, answered, setUnits]
+        [
+            current,
+            answered,
+            pendingRating,
+            setUnits,
+            units,
+            dependencies.saveAnswerFn,
+            dependencies.persistLearnedItems
+        ]
+    );
+
+
+    const handleAnswer = useCallback(
+        (correct: boolean) => {
+            if (
+                !current ||
+                answered ||
+                answerJudgedRef.current ||
+                submittingRef.current
+            ) {
+                return;
+            }
+
+            // 同步锁定，避免一次作答重复判定
+            answerJudgedRef.current = true;
+
+            const algorithm =
+                current.unit.schedulingAlgorithm ?? "fixed";
+
+            // FSRS 答对：暂不保存，等待用户评分
+            if (algorithm === "fsrs" && correct) {
+                setPendingRating(current.key);
+                return;
+            }
+
+            // FSRS 答错：直接按 Again 保存
+            // fixed：仍然使用原有自动保存方式
+            void commitAnswer(
+                correct,
+                algorithm === "fsrs"
+                    ? Rating.Again
+                    : undefined
+            );
+        },
+        [current, answered, commitAnswer]
+    );
+
+
+    const confirmRating = useCallback(
+        (rating: Grade) => {
+            if (
+                !current ||
+                pendingRating !== current.key ||
+                !answerJudgedRef.current ||
+                submittingRef.current
+            ) {
+                return;
+            }
+
+            // 答对后只能选择 Hard / Good / Easy
+            if (
+                rating !== Rating.Hard &&
+                rating !== Rating.Good &&
+                rating !== Rating.Easy
+            ) {
+                return;
+            }
+
+            void commitAnswer(true, rating);
+        },
+        [current, pendingRating, commitAnswer]
     );
 
     const startSession = useCallback((mode: Mode, allUnits: ReviewUnit[], isAnswerable: (u: ReviewUnit) => boolean) => {
         sessionIdRef.current += 1;
         submittingRef.current = false;
+        answerJudgedRef.current = false;
+        setPendingRating(null);
 
         setSaving(false);
         setSaveError("");
@@ -226,26 +347,63 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
                 u => !allKnowledgeKeys.has(getKnowledgeKey(u))
             );
 
-            const learnedVocab = new Set(learnedItems.filter(i => i.startsWith("vocab_"))).size;
-            const learnedGrammar = new Set(learnedItems.filter(i => i.startsWith("grammar_"))).size;
-            const learnedTopic = new Set(learnedItems.filter(i => i.startsWith("topic_"))).size;
+            const todayLearnedItems =
+                dependencies.initialLearnedItems !== undefined
+                    ? learnedItems
+                    : getLearnedItemsToday();
+
+            if (dependencies.initialLearnedItems === undefined) {
+                setLearnedItems(todayLearnedItems);
+            }
+
+            const countLearned = (
+                type: ReviewUnit["itemType"]
+            ): number => new Set(
+                todayLearnedItems.filter((key: string) =>
+                    key.startsWith(`${type}_`) ||
+                    key.split("|")[1] === type
+                )
+            ).size;
+
+            const learnedVocab = countLearned("vocab");
+            const learnedGrammar = countLearned("grammar");
+            const learnedTopic = countLearned("topic");
 
             const remainVocab = Math.max(0, DAILY_LIMIT.vocab - learnedVocab);
             const remainGrammar = Math.max(0, DAILY_LIMIT.grammar - learnedGrammar);
             const remainTopic = Math.max(0, DAILY_LIMIT.topic - learnedTopic);
 
-            const newVocabIds = Array.from(new Set(newUnits.filter(u => u.itemType === "vocab").map(u => u.itemId))).slice(0, remainVocab);
-            const newGrammarIds = Array.from(new Set(newUnits.filter(u => u.itemType === "grammar").map(u => u.itemId))).slice(0, remainGrammar);
-            const newTopicIds = Array.from(new Set(newUnits.filter(u => u.itemType === "topic").map(u => u.itemId))).slice(0, remainTopic);
 
-            const allowedNewItems = new Set([
-                ...newVocabIds.map(id => `vocab_${id}`),
-                ...newGrammarIds.map(id => `grammar_${id}`),
-                ...newTopicIds.map(id => `topic_${id}`)
-            ]);
+            const quotaLeft: Record<
+                ReviewUnit["itemType"],
+                number
+            > = {
+                vocab: remainVocab,
+                grammar: remainGrammar,
+                topic: remainTopic
+            };
 
-            const newUnitsToAdd = newUnits.filter(u =>
-                allowedNewItems.has(`${u.itemType}_${u.itemId}`)
+            // 完整知识点标识：课程 + 类型 + ID
+            const allowedNewItems = new Set<string>();
+
+            for (const unit of newUnits) {
+                const knowledgeKey = getKnowledgeKey(unit);
+
+                // 同一个知识点的不同方向只占一次配额
+                if (allowedNewItems.has(knowledgeKey)) {
+                    continue;
+                }
+
+                if (quotaLeft[unit.itemType] <= 0) {
+                    continue;
+                }
+
+                allowedNewItems.add(knowledgeKey);
+                quotaLeft[unit.itemType] -= 1;
+            }
+
+            const newUnitsToAdd = newUnits.filter(unit =>
+                allowedNewItems.has(getKnowledgeKey(unit))
             );
 
             const dailyCandidates = {
@@ -325,10 +483,12 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
         alert("当前没有可生成的题目，请检查课程数据。");
 
         return false;
-    }, [learnedItems, loadQuestion]);
+    }, [learnedItems, loadQuestion, dependencies.initialLearnedItems]);
 
     const endSession = useCallback(() => {
         sessionIdRef.current += 1;
+        answerJudgedRef.current = false;
+        setPendingRating(null);
 
         if (autoNextRef.current !== null) {
             window.clearTimeout(autoNextRef.current);
@@ -350,5 +510,7 @@ export function useReviewSession(kb: KnowledgeBase | null, units: Record<string,
         startSession, handleAnswer, nextQuestion, endSession,
         learnedItems, setLearnedItems,
         saving, saveError,
+        pendingRating, confirmRating,
+        answerLocked: answered || saving || pendingRating !== null,
     };
 }

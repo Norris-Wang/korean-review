@@ -1,12 +1,20 @@
 import { useEffect, useState, useMemo } from "react";
+
 import { type KnowledgeBase } from "./data/schema";
 import { loadKnowledgeBase, syncUnitsToDB } from "./data/loader";
+
 import { type ReviewUnit } from "./review/units";
+import { Rating } from "./review/fsrsScheduler";
+
 import { db } from "./db/db";
+
 import Dashboard from "./pages/Dashboard";
 import WrongBook from "./pages/WrongBook";
 import PracticeLab from "./pages/PracticeLab";
+import WrongBookSandbox from "./pages/WrongBookSandbox";
+
 import QuestionRenderer from "./components/QuestionRenderer";
+
 import { useReviewSession, DAILY_LIMIT } from "./hooks/useReviewSession";
 
 type View =
@@ -88,6 +96,15 @@ export default function App() {
     if (error) return <div style={{ padding: 40, color: "red" }}>{error}</div>;
     if (!kb) return <div style={{ padding: 40 }}>加载中…</div>;
 
+    if (
+        import.meta.env.DEV &&
+        new URLSearchParams(
+            window.location.search
+        ).has("wrongbook-test")
+    ) {
+        return <WrongBookSandbox kb={kb} />;
+    }
+
     if (view === "home") {
         return (
             <Dashboard
@@ -144,18 +161,91 @@ export default function App() {
         const q = session.current.q;
         return (
             <div className="app">
+
                 <header>
                     <h1>第 {session.answeredCount + 1} 题</h1>
                     <button className="btn secondary" style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }} onClick={() => { session.endSession(); setView("home"); }}>结束</button>
                 </header>
+
                 <div className="card">
                     <QuestionRenderer
                         question={q}
                         questionKey={session.current.key}
-                        answered={session.answered}
+                        answered={session.answerLocked}
                         onAnswer={session.handleAnswer}
                     />
                 </div>
+
+                {session.pendingRating && (
+                    <div className="card">
+                        <div className="feedback ok">
+                            ✅ 回答正确！
+                        </div>
+
+                        <p style={{
+                            marginTop: 14,
+                            marginBottom: 14,
+                            fontSize: 14
+                        }}>
+                            这次回忆对你来说有多难？
+                        </p>
+
+                        <div style={{
+                            display: "grid",
+                            gridTemplateColumns:
+                                "repeat(3, minmax(0, 1fr))",
+                            gap: 10
+                        }}>
+                            <button
+                                className="btn secondary"
+                                disabled={session.saving}
+                                onClick={() =>
+                                    session.confirmRating(Rating.Hard)
+                                }
+                            >
+                                Hard
+                                <small style={{ display: "block" }}>
+                                    有点吃力
+                                </small>
+                            </button>
+
+                            <button
+                                className="btn"
+                                disabled={session.saving}
+                                onClick={() =>
+                                    session.confirmRating(Rating.Good)
+                                }
+                            >
+                                Good
+                                <small style={{ display: "block" }}>
+                                    正常回忆
+                                </small>
+                            </button>
+
+                            <button
+                                className="btn secondary"
+                                disabled={session.saving}
+                                onClick={() =>
+                                    session.confirmRating(Rating.Easy)
+                                }
+                            >
+                                Easy
+                                <small style={{ display: "block" }}>
+                                    非常轻松
+                                </small>
+                            </button>
+                        </div>
+
+                        <p style={{
+                            marginTop: 12,
+                            fontSize: 12,
+                            color: "#86868b"
+                        }}>
+                            选择评分后保存本次复习记录
+                        </p>
+                    </div>
+                )}
+
                 {session.saving && (
                     <div className="card">
                         <p role="status">
