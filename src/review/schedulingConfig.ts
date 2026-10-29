@@ -12,7 +12,7 @@ export type SchedulingAlgorithm =
     "fixed" | "fsrs";
 
 // 正式启用前保持 false
-export const ENABLE_FSRS_FOR_NEW_UNITS = false;
+export const ENABLE_FSRS_FOR_NEW_UNITS = true;
 
 export function getDefaultSchedulingAlgorithm():
     SchedulingAlgorithm {
