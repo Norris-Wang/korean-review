@@ -1,11 +1,17 @@
 import { useState, useRef, useCallback } from "react";
+
 import type { KnowledgeBase } from "../data/schema";
+
 import type { ReviewUnit } from "../review/units";
 import { selectSessionUnits, selectDailyUnits } from "../review/selector";
 import { getEligibleUnits, getKnowledgeKey } from "../review/progression";
+import { buildDailyCandidatePools } from "../review/dailyPlanning";
+
 import { generateFor } from "../generators";
-import { saveAnswer } from "../db/answerService";
 import type { GeneratedQuestion } from "../generators/types";
+
+import { saveAnswer } from "../db/answerService";
+
 import { Rating, type Grade } from "ts-fsrs";
 
 export type Mode = "due" | "vocab" | "grammar" | "topic" | "mix";
@@ -319,101 +325,15 @@ export function useReviewSession(
         else if (mode === "grammar") pool = eligibleUnits.filter(u => u.itemType === "grammar" && isAnswerable(u));
         else if (mode === "topic") pool = eligibleUnits.filter(u => u.itemType === "topic" && isAnswerable(u));
         else if (mode === "due") {
-            const availableUnits = eligibleUnits;
-
-
-            const allKnowledgeKeys = new Set(
-                allUnits
-                    .filter(u => u.seen > 0)
-                    .map(getKnowledgeKey)
+            const pools = buildDailyCandidatePools(
+                allUnits,
+                learnedItems,
+                isAnswerable,
+                DAILY_LIMIT
             );
-
-            const dueReviews = availableUnits.filter(
-                u => u.seen > 0 && u.dueAt <= Date.now()
-            );
-
-            const unstartedUnits = availableUnits.filter(
-                u => u.seen === 0
-            );
-
-            // 已学过的知识点，现在开放了新的题型
-            // 不占用每日新增知识点配额
-            const progressionUnits = unstartedUnits.filter(
-                u => allKnowledgeKeys.has(getKnowledgeKey(u))
-            );
-
-            // 真正从未接触过的新知识
-            const newUnits = unstartedUnits.filter(
-                u => !allKnowledgeKeys.has(getKnowledgeKey(u))
-            );
-
-            const todayLearnedItems =
-                dependencies.initialLearnedItems !== undefined
-                    ? learnedItems
-                    : getLearnedItemsToday();
-
-            if (dependencies.initialLearnedItems === undefined) {
-                setLearnedItems(todayLearnedItems);
-            }
-
-            const countLearned = (
-                type: ReviewUnit["itemType"]
-            ): number => new Set(
-                todayLearnedItems.filter((key: string) =>
-                    key.startsWith(`${type}_`) ||
-                    key.split("|")[1] === type
-                )
-            ).size;
-
-            const learnedVocab = countLearned("vocab");
-            const learnedGrammar = countLearned("grammar");
-            const learnedTopic = countLearned("topic");
-
-            const remainVocab = Math.max(0, DAILY_LIMIT.vocab - learnedVocab);
-            const remainGrammar = Math.max(0, DAILY_LIMIT.grammar - learnedGrammar);
-            const remainTopic = Math.max(0, DAILY_LIMIT.topic - learnedTopic);
-
-
-            const quotaLeft: Record<
-                ReviewUnit["itemType"],
-                number
-            > = {
-                vocab: remainVocab,
-                grammar: remainGrammar,
-                topic: remainTopic
-            };
-
-            // 完整知识点标识：课程 + 类型 + ID
-            const allowedNewItems = new Set<string>();
-
-            for (const unit of newUnits) {
-                const knowledgeKey = getKnowledgeKey(unit);
-
-                // 同一个知识点的不同方向只占一次配额
-                if (allowedNewItems.has(knowledgeKey)) {
-                    continue;
-                }
-
-                if (quotaLeft[unit.itemType] <= 0) {
-                    continue;
-                }
-
-                allowedNewItems.add(knowledgeKey);
-                quotaLeft[unit.itemType] -= 1;
-            }
-
-            const newUnitsToAdd = newUnits.filter(unit =>
-                allowedNewItems.has(getKnowledgeKey(unit))
-            );
-
-            const dailyCandidates = {
-                due: dueReviews,
-                progression: progressionUnits,
-                fresh: newUnitsToAdd
-            };
 
             const dailySelected = selectDailyUnits(
-                dailyCandidates,
+                pools,
                 20
             );
 

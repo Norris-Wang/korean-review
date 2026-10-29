@@ -28,45 +28,54 @@ export async function loadKnowledgeBase(): Promise<KnowledgeBase> {
 
 
 
+
 export async function syncUnitsToDB(
     kb: KnowledgeBase,
     database: ReviewDB = db,
     algorithm: SchedulingAlgorithm =
         getDefaultSchedulingAlgorithm()
 ): Promise<Record<string, ReviewUnit>> {
-    const stored = await database.units.toArray();
 
-    const map: Record<string, ReviewUnit> = {};
+    // 在事务外同步生成候选单元
+    const generated = kb.lessons.flatMap(
+        lesson => buildUnitsForLesson(lesson)
+    );
 
-    // 首先保留数据库里已经存在的记录
-    for (const unit of stored) {
-        map[unit.key] = unit;
-    }
+    // 读取旧记录和插入新记录属于同一事务
+    return database.transaction(
+        "rw",
+        database.units,
+        async () => {
+            const stored =
+                await database.units.toArray();
 
+            const map: Record<string, ReviewUnit> = {};
 
-    for (const lesson of kb.lessons) {
-        const generated =
-            buildUnitsForLesson(lesson);
-
-        for (const unit of generated) {
-
-            // 旧单元永远不覆盖
-            if (map[unit.key]) {
-                continue;
+            // 保留已经存在的全部学习状态
+            for (const unit of stored) {
+                map[unit.key] = unit;
             }
 
-            // 仅新创建的单元使用默认配置
-            const newUnit: ReviewUnit = {
-                ...unit,
-                schedulingAlgorithm: algorithm
-            };
+            for (const unit of generated) {
 
-            await database.units.add(newUnit);
+                // 已存在的单元不允许覆盖
+                if (map[unit.key]) {
+                    continue;
+                }
 
-            // 写入成功后才更新内存快照
-            map[newUnit.key] = newUnit;
+                // 默认算法只作用于真正的新单元
+                const newUnit: ReviewUnit = {
+                    ...unit,
+                    schedulingAlgorithm: algorithm
+                };
+
+                await database.units.add(newUnit);
+
+                // 成功插入后记录到本次同步快照
+                map[newUnit.key] = newUnit;
+            }
+
+            return map;
         }
-    }
-
-    return map;
+    );
 }

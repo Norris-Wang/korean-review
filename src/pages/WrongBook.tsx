@@ -415,15 +415,11 @@ export default function WrongBook({
             <div className="app">
                 <header>
                     <h1>错题重做</h1>
-                    <button className="btn secondary" style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }}
+                    <button className="btn secondary"
+                        style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }}
                         disabled={saving}
-                        onClick={async () => {
-                            submittingRef.current = false;
-                            setReviewing(null);
-                            setFeedback(null);
-                            setSaveError("");
-                            await load();
-                        }}>
+                        onClick={() => void returnToWrongList()}
+                    >
                         返回
                     </button>
 

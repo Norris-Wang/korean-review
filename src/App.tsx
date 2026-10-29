@@ -5,6 +5,8 @@ import { loadKnowledgeBase, syncUnitsToDB } from "./data/loader";
 
 import { type ReviewUnit } from "./review/units";
 import { Rating } from "./review/fsrsScheduler";
+import { getKnowledgeKey } from "./review/progression";
+import { buildDailyCandidatePools } from "./review/dailyPlanning";
 
 import { db } from "./db/db";
 
@@ -24,6 +26,8 @@ type View =
     | "wrongbook"
     | "practice";
 
+
+
 export default function App() {
     const [kb, setKb] = useState<KnowledgeBase | null>(null);
     const [units, setUnits] = useState<Record<string, ReviewUnit>>({});
@@ -42,49 +46,66 @@ export default function App() {
 
     const allUnits = Object.values(units);
 
-    const masteredFillIds = useMemo(() => {
-        const s = new Set<string>();
-        for (const u of allUnits) {
-            if (u.itemType === "vocab" && u.direction === "fill" && u.stage >= 1) s.add(u.itemId);
+
+    const completedFillKeys = useMemo(() => {
+        const completed = new Set<string>();
+
+        for (const unit of Object.values(units)) {
+            if (
+                unit.itemType !== "vocab" ||
+                unit.direction !== "fill"
+            ) {
+                continue;
+            }
+
+            // 固定算法保持原有 stage >= 1 的行为
+            const algorithm =
+                unit.schedulingAlgorithm ?? "fixed";
+
+            const completedFill =
+                algorithm === "fsrs"
+                    ? unit.seen > 0 &&
+                    unit.seen > unit.lapses
+                    : unit.stage >= 1;
+
+            if (completedFill) {
+                completed.add(getKnowledgeKey(unit));
+            }
         }
-        return s;
+
+        return completed;
     }, [units]);
 
-    const isAnswerable = (u: ReviewUnit) => {
-        if (u.itemType === "vocab" && u.direction !== "fill" && masteredFillIds.has(u.itemId)) return false;
+
+    const isAnswerable = (unit: ReviewUnit) => {
+        if (
+            unit.itemType === "vocab" &&
+            unit.direction !== "fill" &&
+            completedFillKeys.has(getKnowledgeKey(unit))
+        ) {
+            return false;
+        }
+
         return true;
     };
 
     const session = useReviewSession(kb, units, setUnits);
 
-    const startedVocabIds = new Set(allUnits.filter(u => u.itemType === "vocab" && u.seen > 0).map(u => u.itemId));
-    const startedGrammarIds = new Set(allUnits.filter(u => u.itemType === "grammar" && u.seen > 0).map(u => u.itemId));
-    const startedTopicIds = new Set(allUnits.filter(u => u.itemType === "topic" && u.seen > 0).map(u => u.itemId));
 
-    const dueCount = allUnits.filter(u => u.seen > 0 && u.dueAt <= Date.now() && isAnswerable(u)).length;
-    const pureNewUnits = allUnits.filter(u => {
-        if (u.seen > 0) return false;
-        if (u.itemType === "vocab") return !startedVocabIds.has(u.itemId);
-        if (u.itemType === "grammar") return !startedGrammarIds.has(u.itemId);
-        if (u.itemType === "topic") return !startedTopicIds.has(u.itemId);
-        return false;
-    });
-    const learnedVocab = new Set(session.learnedItems.filter(i => i.startsWith("vocab_"))).size;
-    const learnedGrammar = new Set(session.learnedItems.filter(i => i.startsWith("grammar_"))).size;
-    const learnedTopic = new Set(session.learnedItems.filter(i => i.startsWith("topic_"))).size;
-    const remainVocab = Math.max(0, DAILY_LIMIT.vocab - learnedVocab);
-    const remainGrammar = Math.max(0, DAILY_LIMIT.grammar - learnedGrammar);
-    const remainTopic = Math.max(0, DAILY_LIMIT.topic - learnedTopic);
-    const newVocabIds = Array.from(new Set(pureNewUnits.filter(u => u.itemType === "vocab").map(u => u.itemId))).slice(0, remainVocab);
-    const newGrammarIds = Array.from(new Set(pureNewUnits.filter(u => u.itemType === "grammar").map(u => u.itemId))).slice(0, remainGrammar);
-    const newTopicIds = Array.from(new Set(pureNewUnits.filter(u => u.itemType === "topic").map(u => u.itemId))).slice(0, remainTopic);
-    const allowedNewItems = new Set([
-        ...newVocabIds.map(id => `vocab_${id}`),
-        ...newGrammarIds.map(id => `grammar_${id}`),
-        ...newTopicIds.map(id => `topic_${id}`)
-    ]);
 
-    const actualNewUnitCount = pureNewUnits.filter(u => allowedNewItems.has(`${u.itemType}_${u.itemId}`)).length;
+
+    const dailyPools = buildDailyCandidatePools(
+        allUnits,
+        session.learnedItems,
+        isAnswerable,
+        DAILY_LIMIT
+    );
+
+    const dueCount = dailyPools.due.length;
+
+    const actualNewUnitCount = new Set(
+        dailyPools.fresh.map(getKnowledgeKey)
+    ).size;
 
 
     useEffect(() => {
@@ -133,7 +154,35 @@ export default function App() {
     }
 
     if (view === "wrongbook") {
-        return <WrongBook kb={kb} onBack={() => setView("home")} />;
+        return (
+            <WrongBook
+                kb={kb}
+                onBack={() => {
+                    void db.units.toArray()
+                        .then(rows => {
+                            const latestUnits =
+                                Object.fromEntries(
+                                    rows.map(unit => [
+                                        unit.key,
+                                        unit
+                                    ])
+                                );
+
+                            setUnits(latestUnits);
+                            setView("home");
+                        })
+                        .catch(error => {
+                            console.error(
+                                "刷新学习进度失败：",
+                                error
+                            );
+                            setError(
+                                "刷新学习进度失败，请重新加载页面。"
+                            );
+                        });
+                }}
+            />
+        );
     }
 
     if (view === "practice") {
