@@ -1,30 +1,42 @@
 
-import { db } from "./db";
-import { schedule } from "../review/scheduler";
+import type { Grade } from "ts-fsrs";
+
+import { db, type ReviewDB } from "./db";
+
 import type { ReviewUnit } from "../review/units";
+
 import type { GeneratedQuestion } from "../generators/types";
 
+import { calculateNextReview } from "../review/schedulingService";
+
 /**
- * 将一次答题作为一个原子操作保存。
+ * 向指定数据库保存一次答题。
  *
- * 数据库更新成功：
- * - 学习单元状态更新
- * - 答题日志新增
+ * 正式环境使用主数据库；
+ * 自动测试可以使用隔离数据库。
  *
- * 数据库更新失败：
- * - 两项操作一起回滚
+ * 在同一个事务中：
+ * 1. 读取最新复习状态
+ * 2. 计算下一次复习
+ * 3. 保存复习状态
+ * 4. 写入答题日志
  */
-export async function saveAnswer(
+export async function saveAnswerToDb(
+    database: ReviewDB,
     unitKey: string,
     correct: boolean,
-    questionType: GeneratedQuestion["type"]
+    questionType: GeneratedQuestion["type"],
+    now = Date.now(),
+    rating?: Grade
 ): Promise<ReviewUnit> {
-    return db.transaction(
+    return database.transaction(
         "rw",
-        db.units,
-        db.logs,
+        database.units,
+        database.logs,
         async () => {
-            const unit = await db.units.get(unitKey);
+            const unit = await database.units.get(
+                unitKey
+            );
 
             if (!unit) {
                 throw new Error(
@@ -32,23 +44,55 @@ export async function saveAnswer(
                 );
             }
 
-            // 创建副本，不直接修改原始对象
-            const updated: ReviewUnit = { ...unit };
+            const algorithm =
+                unit.schedulingAlgorithm ?? "fixed";
 
-            // 根据答题结果更新复习状态
-            schedule(updated, correct);
+            // 纯同步计算，不在事务中执行其他异步任务
+            const updated = calculateNextReview(
+                unit,
+                correct,
+                now,
+                rating
+            );
 
-            // 两项写入在同一个事务中执行
-            await db.units.put(updated);
+            // 两次写入处于同一 IndexedDB 事务
+            await database.units.put(updated);
 
-            await db.logs.add({
+            await database.logs.add({
                 unitKey,
                 correct,
-                at: Date.now(),
-                type: questionType
+                at: now,
+                type: questionType,
+                algorithm,
+
+                ...(algorithm === "fsrs"
+                    ? { rating }
+                    : {})
             });
 
             return updated;
         }
+    );
+}
+
+/**
+ * 正式应用的统一保存入口。
+ *
+ * 保持原有调用签名不变，
+ * 因此不必修改 useReviewSession 和 WrongBook。
+ */
+export function saveAnswer(
+    unitKey: string,
+    correct: boolean,
+    questionType: GeneratedQuestion["type"],
+    rating?: Grade
+): Promise<ReviewUnit> {
+    return saveAnswerToDb(
+        db,
+        unitKey,
+        correct,
+        questionType,
+        Date.now(),
+        rating
     );
 }

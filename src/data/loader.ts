@@ -1,7 +1,9 @@
 import { parse } from "yaml";
 import { KnowledgeBaseSchema, type KnowledgeBase } from "./schema";
-import { db } from "../db/db";
+import { db, type ReviewDB } from "../db/db";
 import { buildUnitsForLesson, type ReviewUnit } from "../review/units";
+import { getDefaultSchedulingAlgorithm } from "../review/schedulingConfig";
+import type { SchedulingAlgorithm } from "../review/schedulingConfig";
 import { assertVocabularyDisambiguation } from "./vocabValidation";
 
 export async function loadKnowledgeBase(): Promise<KnowledgeBase> {
@@ -24,18 +26,56 @@ export async function loadKnowledgeBase(): Promise<KnowledgeBase> {
     return kb;
 }
 
-export async function syncUnitsToDB(kb: KnowledgeBase): Promise<Record<string, ReviewUnit>> {
-    const stored = await db.units.toArray();
-    const map: Record<string, ReviewUnit> = {};
-    for (const u of stored) map[u.key] = u;
 
-    for (const lesson of kb.lessons) {
-        for (const u of buildUnitsForLesson(lesson)) {
-            if (!map[u.key]) {
-                map[u.key] = u;
-                await db.units.put(u);
+
+
+export async function syncUnitsToDB(
+    kb: KnowledgeBase,
+    database: ReviewDB = db,
+    algorithm: SchedulingAlgorithm =
+        getDefaultSchedulingAlgorithm()
+): Promise<Record<string, ReviewUnit>> {
+
+    // 在事务外同步生成候选单元
+    const generated = kb.lessons.flatMap(
+        lesson => buildUnitsForLesson(lesson)
+    );
+
+    // 读取旧记录和插入新记录属于同一事务
+    return database.transaction(
+        "rw",
+        database.units,
+        async () => {
+            const stored =
+                await database.units.toArray();
+
+            const map: Record<string, ReviewUnit> = {};
+
+            // 保留已经存在的全部学习状态
+            for (const unit of stored) {
+                map[unit.key] = unit;
             }
+
+            for (const unit of generated) {
+
+                // 已存在的单元不允许覆盖
+                if (map[unit.key]) {
+                    continue;
+                }
+
+                // 默认算法只作用于真正的新单元
+                const newUnit: ReviewUnit = {
+                    ...unit,
+                    schedulingAlgorithm: algorithm
+                };
+
+                await database.units.add(newUnit);
+
+                // 成功插入后记录到本次同步快照
+                map[newUnit.key] = newUnit;
+            }
+
+            return map;
         }
-    }
-    return map;
+    );
 }

@@ -1,11 +1,14 @@
 import { useEffect, useState, useRef } from "react";
-import { db } from "../db/db";
-import { saveAnswer } from "../db/answerService";
+import { db, type ReviewDB } from "../db/db";
+import { saveAnswerToDb } from "../db/answerService";
 import type { ReviewUnit } from "../review/units";
 import type { KnowledgeBase } from "../data/schema";
 import type { GeneratedQuestion } from "../generators/types";
 import { generateFor } from "../generators";
 import QuestionRenderer from "../components/QuestionRenderer";
+import { Rating, type Grade } from "ts-fsrs";
+
+type SaveAnswerFn = typeof saveAnswerToDb;
 
 interface WrongItem {
     unitKey: string;
@@ -15,7 +18,17 @@ interface WrongItem {
     lastType: string;
 }
 
-export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: () => void }) {
+export default function WrongBook({
+    kb,
+    onBack,
+    database = db,
+    saveAnswerFn = saveAnswerToDb
+}: {
+    kb: KnowledgeBase;
+    onBack: () => void;
+    database?: ReviewDB;
+    saveAnswerFn?: SaveAnswerFn;
+}) {
     const [items, setItems] = useState<WrongItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [reviewing, setReviewing] = useState<{ key: string; q: GeneratedQuestion } | null>(null);
@@ -25,6 +38,13 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState("");
 
+    const [pendingRating, setPendingRating] = useState(false);
+    const pendingAnswerRef = useRef<{ key: string; correct: boolean; rating?: Grade; } | null>(null);
+    const answerJudgedRef = useRef(false);
+
+    const reviewTokenRef = useRef(0);
+    const [answerLocked, setAnswerLocked] = useState(false);
+
     useEffect(() => { load(); }, []);
 
 
@@ -33,8 +53,8 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
 
         try {
             const [logs, units] = await Promise.all([
-                db.logs.toArray(),
-                db.units.toArray()
+                database.logs.toArray(),
+                database.units.toArray()
             ]);
 
             const unitMap = new Map(
@@ -165,48 +185,226 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
         const q = generateFor(kb, item.unit);
         if (!q) return;
         setReviewing({ key: item.unitKey, q });
+        answerJudgedRef.current = false;
+        pendingAnswerRef.current = null;
+        reviewTokenRef.current += 1;
+
+        setAnswerLocked(false);
+
+        setPendingRating(false);
+        setSaveError("");
         setFeedback(null);
     }
 
-
-    async function handleAnswer(correct: boolean) {
-        if (!reviewing || feedback || submittingRef.current) {
+    async function commitWrongAnswer(
+        correct: boolean,
+        rating?: Grade
+    ) {
+        if (
+            !reviewing ||
+            feedback ||
+            submittingRef.current
+        ) {
             return;
         }
 
-        // 同步锁，立即阻止重复提交
+        const { key, q } = reviewing;
+
         submittingRef.current = true;
         setSaving(true);
         setSaveError("");
 
-        const { key, q } = reviewing;
-
         try {
-            await saveAnswer(key, correct, q.type);
+            // 真正写入数据库
+            await saveAnswerFn(
+                database,
+                key,
+                correct,
+                q.type,
+                Date.now(),
+                rating
+            );
 
-            // 只有数据库保存成功才显示答题结果
+            // 只有保存成功才更新 UI
             setFeedback({
                 correct,
                 answer: q.answer
             });
 
+            setPendingRating(false);
+            pendingAnswerRef.current = null;
+
+            // 正确作答后从错题列表移除
             if (correct) {
                 setItems(prev =>
-                    prev.filter(item => item.unitKey !== key)
+                    prev.filter(
+                        item => item.unitKey !== key
+                    )
                 );
             }
-        } catch (error) {
-            console.error("保存错题结果失败：", error);
 
-            setSaveError(
-                "保存失败，请检查浏览器存储后重试。"
+        } catch (error) {
+            console.error(
+                "错题保存失败：",
+                error
             );
 
-            // 保存失败，允许重新提交
-            submittingRef.current = false;
+            setSaveError(
+                "保存失败，请重新提交本次评分。"
+            );
+
         } finally {
+            submittingRef.current = false;
             setSaving(false);
         }
+    }
+
+
+    async function handleAnswer(correct: boolean) {
+        if (
+            !reviewing ||
+            feedback ||
+            answerJudgedRef.current ||
+            submittingRef.current
+        ) {
+            return;
+        }
+
+        answerJudgedRef.current = true;
+
+        const token = reviewTokenRef.current;
+        setAnswerLocked(true);
+        setSaving(true);
+        setSaveError("");
+
+        let unit: ReviewUnit | undefined;
+
+        try {
+            unit = await database.units.get(reviewing.key);
+        } catch (error) {
+            console.error("读取复习单元失败", error);
+
+            if (token === reviewTokenRef.current) {
+                setSaveError("读取失败，请返回后重试。");
+            }
+            return;
+        } finally {
+            if (token === reviewTokenRef.current) {
+                setSaving(false);
+            }
+        }
+
+        if (token !== reviewTokenRef.current) return;
+
+        if (!unit) {
+            setSaveError("找不到复习单元，请返回后重试。");
+            return;
+        }
+
+        const algorithm = unit.schedulingAlgorithm ?? "fixed";
+        console.log("当前错题算法：", reviewing.key, algorithm);
+
+        // FSRS 回答正确：等待用户选择评分
+        if (algorithm === "fsrs" && correct) {
+            pendingAnswerRef.current = {
+                key: reviewing.key,
+                correct: true
+            };
+
+            setPendingRating(true);
+            return;
+        }
+
+        // 固定算法：直接保存
+        // FSRS 回答错误：按 Again 保存
+        const rating =
+            algorithm === "fsrs"
+                ? Rating.Again
+                : undefined;
+
+        pendingAnswerRef.current = {
+            key: reviewing.key,
+            correct,
+            rating
+        };
+
+        await commitWrongAnswer(
+            correct,
+            rating
+        );
+    }
+
+
+    async function confirmWrongRating(
+        rating: Grade
+    ) {
+        if (
+            !reviewing ||
+            !pendingRating ||
+            submittingRef.current ||
+            feedback
+        ) {
+            return;
+        }
+
+        const pending = pendingAnswerRef.current;
+
+        if (
+            !pending ||
+            pending.key !== reviewing.key ||
+            !pending.correct
+        ) {
+            return;
+        }
+
+        // 正确答案只能选择这三个评分
+        if (
+            rating !== Rating.Hard &&
+            rating !== Rating.Good &&
+            rating !== Rating.Easy
+        ) {
+            return;
+        }
+
+        await commitWrongAnswer(true, rating);
+    }
+
+
+    async function retryWrongAnswer() {
+        const pending = pendingAnswerRef.current;
+
+        if (
+            !reviewing ||
+            !pending ||
+            pending.key !== reviewing.key ||
+            submittingRef.current ||
+            saving ||
+            feedback ||
+            pendingRating
+        ) {
+            return;
+        }
+
+        await commitWrongAnswer(
+            pending.correct,
+            pending.rating
+        );
+    }
+
+    async function returnToWrongList() {
+        if (saving || submittingRef.current) return;
+
+        reviewTokenRef.current += 1;
+        answerJudgedRef.current = false;
+        pendingAnswerRef.current = null;
+
+        setPendingRating(false);
+        setAnswerLocked(false);
+        setReviewing(null);
+        setFeedback(null);
+        setSaveError("");
+
+        await load();
     }
 
     if (loading) return <div className="app"><p>加载中…</p></div>;
@@ -217,15 +415,11 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
             <div className="app">
                 <header>
                     <h1>错题重做</h1>
-                    <button className="btn secondary" style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }}
+                    <button className="btn secondary"
+                        style={{ width: "auto", padding: "8px 14px", fontSize: 14, margin: 0 }}
                         disabled={saving}
-                        onClick={async () => {
-                            submittingRef.current = false;
-                            setReviewing(null);
-                            setFeedback(null);
-                            setSaveError("");
-                            await load();
-                        }}>
+                        onClick={() => void returnToWrongList()}
+                    >
                         返回
                     </button>
 
@@ -240,15 +434,101 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
                             {saveError}
                         </p>
                     )}
+
+                    {saveError &&
+                        pendingAnswerRef.current &&
+                        !pendingRating && (
+                            <button
+                                className="btn secondary"
+                                disabled={saving}
+                                onClick={retryWrongAnswer}
+                            >
+                                重新保存本次答案
+                            </button>
+                        )}
                 </header>
                 <div className="card">
                     <QuestionRenderer
                         question={q}
                         questionKey={reviewing.key}
-                        answered={!!feedback}
+                        answered={
+                            answerLocked ||
+                            saving ||
+                            pendingRating ||
+                            !!feedback
+                        }
                         onAnswer={handleAnswer}
                     />
                 </div>
+
+
+                {pendingRating && !feedback && (
+                    <div className="card">
+                        <div className="feedback ok">
+                            ✅ 回答正确！
+                        </div>
+
+                        <p style={{ marginTop: 14 }}>
+                            这次回忆对你来说有多难？
+                        </p>
+
+                        <div
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(3, 1fr)",
+                                gap: 10
+                            }}
+                        >
+                            <button
+                                className="btn secondary"
+                                disabled={saving}
+                                onClick={() =>
+                                    void confirmWrongRating(Rating.Hard)
+                                }
+                            >
+                                Hard
+                                <small style={{ display: "block" }}>
+                                    有点吃力
+                                </small>
+                            </button>
+
+                            <button
+                                className="btn"
+                                disabled={saving}
+                                onClick={() =>
+                                    void confirmWrongRating(Rating.Good)
+                                }
+                            >
+                                Good
+                                <small style={{ display: "block" }}>
+                                    正常回忆
+                                </small>
+                            </button>
+
+                            <button
+                                className="btn secondary"
+                                disabled={saving}
+                                onClick={() =>
+                                    void confirmWrongRating(Rating.Easy)
+                                }
+                            >
+                                Easy
+                                <small style={{ display: "block" }}>
+                                    非常轻松
+                                </small>
+                            </button>
+                        </div>
+
+                        <p style={{
+                            color: "#86868b",
+                            fontSize: 12,
+                            marginTop: 10
+                        }}>
+                            选择评分后才会保存这次复习。
+                        </p>
+                    </div>
+                )}
+
                 {feedback && (
                     <div className="card">
                         <div className={`feedback ${feedback.correct ? "ok" : "bad"}`}>
@@ -257,7 +537,9 @@ export default function WrongBook({ kb, onBack }: { kb: KnowledgeBase; onBack: (
                         <p style={{ fontSize: 14, color: "#86868b", whiteSpace: "pre-wrap", marginTop: 12 }}>
                             {q.explanation}
                         </p>
-                        <button className="btn" style={{ marginTop: 14 }} onClick={() => { setReviewing(null); setFeedback(null); }}>
+                        <button className="btn" style={{ marginTop: 14 }}
+                            onClick={() => void returnToWrongList()}
+                            disabled={saving}>
                             返回错题本
                         </button>
                     </div>

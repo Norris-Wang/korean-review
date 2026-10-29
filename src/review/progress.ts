@@ -1,6 +1,7 @@
 
 import type { KnowledgeBase } from "../data/schema";
 import type { ReviewUnit } from "./units";
+import { isUnitMastered } from "./mastery";
 
 export type KnowledgeType = ReviewUnit["itemType"];
 
@@ -21,7 +22,7 @@ export interface LessonProgress extends ProgressCount {
 }
 
 // 当前版本的掌握标准
-export const MASTERY_STAGE = 3;
+export { FIXED_MASTERY_STAGE as MASTERY_STAGE } from "./mastery";
 
 // 不同知识类型的代表性练习方向
 const MASTERY_DIRECTION: Record<KnowledgeType, string> = {
@@ -95,10 +96,7 @@ export function calculateProgress(
                 target.started++;
             }
 
-            if (
-                unit.seen > 0 &&
-                unit.stage >= MASTERY_STAGE
-            ) {
+            if (isUnitMastered(unit)) {
                 target.mastered++;
             }
         }

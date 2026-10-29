@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import { db, type AnswerLog } from "../db/db";
+
+import { db, type ReviewDB, type AnswerLog } from "../db/db";
+
 import type { KnowledgeBase } from "../data/schema";
+
 import type { ReviewUnit } from "../review/units";
 import { calculateProgress } from "../review/progress";
+import { getKnowledgeKey } from "../review/progression";
 
 type Mode = "due" | "vocab" | "grammar" | "topic" | "mix";
 
@@ -11,13 +15,15 @@ interface Props {
     units: Record<string, ReviewUnit>;
     dueReviewCount: number;
     newUnitCount: number;
+    database?: ReviewDB;
+    refreshRevision?: number;
     onStart: (m: Mode) => void;
     onWrongBook: () => void;
     onPractice: () => void;
     onReset: () => void;
 }
 
-export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onStart, onWrongBook, onPractice, onReset }: Props) {
+export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onStart, onWrongBook, onPractice, onReset, database = db, refreshRevision = 0 }: Props) {
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [logs, setLogs] = useState<AnswerLog[]>([]);
     const [daysToShow, setDaysToShow] = useState(7);
@@ -31,9 +37,37 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+
     useEffect(() => {
-        db.logs.toArray().then(setLogs);
-    }, []);
+        let active = true;
+
+        // 切换数据库时先清除旧日志，避免短暂混用数据
+        setLogs([]);
+
+        async function loadLogs() {
+            try {
+                const result =
+                    await database.logs.toArray();
+
+                if (active) {
+                    setLogs(result);
+                }
+            } catch (error) {
+                if (active) {
+                    console.error(
+                        "Dashboard 读取答题日志失败：",
+                        error
+                    );
+                }
+            }
+        }
+
+        void loadLogs();
+
+        return () => {
+            active = false;
+        };
+    }, [database, refreshRevision]);
 
     const totalLogs = logs.length;
     const correctLogs = logs.filter(l => l.correct).length;
@@ -57,14 +91,22 @@ export default function Dashboard({ kb, units, dueReviewCount, newUnitCount, onS
         }
     }
 
-    const wrongCount = Array.from(
-        lastLogByUnit.entries()
-    ).filter(([unitKey, log]) => {
-        return (
-            !log.correct &&
-            units[unitKey] !== undefined
+
+    const wrongKnowledgeKeys = new Set<string>();
+
+    for (const [unitKey, log] of lastLogByUnit.entries()) {
+        const unit = units[unitKey];
+
+        if (!unit || log.correct) {
+            continue;
+        }
+
+        wrongKnowledgeKeys.add(
+            getKnowledgeKey(unit)
         );
-    }).length;
+    }
+
+    const wrongCount = wrongKnowledgeKeys.size;
 
     const recentDays = Array.from({ length: daysToShow }).map((_, i) => {
         const d = new Date();
